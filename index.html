@@ -1,5 +1,10 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b0f1a">
 <title>Give to Walkers</title>
-<meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800;900&family=Figtree:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap">
@@ -15,7 +20,7 @@
   --screen: #8fb0ff;       /* phone-glow blue, secondary accent */
   --rule: #262d40;
 
-  --display: "Big Shoulders Display", "Oswald", "Arial Narrow", sans-serif;
+  --display: "Big Shoulders Display", "Arial Narrow", "Impact", sans-serif;
   --body: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
   --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
 
@@ -57,7 +62,9 @@ body {
   max-width: 460px; margin: 0 auto;
   padding-left: max(20px, env(safe-area-inset-left, 0px));
   padding-right: max(20px, env(safe-area-inset-right, 0px));
-  padding-block: 44px 36px;
+  padding-top: calc(44px + env(safe-area-inset-top, 0px));
+  padding-bottom: calc(28px + env(safe-area-inset-bottom, 0px));
+  min-height: 100vh; min-height: 100svh; box-sizing: border-box;
   display: flex; flex-direction: column; gap: 32px;
 }
 
@@ -69,14 +76,14 @@ body {
 .presents b { color: var(--sand); font-weight: 500; }
 h1 {
   font-family: var(--display); font-weight: 900; text-transform: uppercase;
-  font-size: clamp(76px, 26vw, 118px); line-height: 0.82; letter-spacing: 0.01em;
+  font-size: clamp(64px, 23vw, 118px); line-height: 0.82; letter-spacing: 0.01em;
   margin: 10px 0 0; color: var(--sand);
   text-wrap: balance;
 }
 /* the mirror motif: a faint reflected title beneath */
 .mirror {
   font-family: var(--display); font-weight: 900; text-transform: uppercase;
-  font-size: clamp(76px, 26vw, 118px); line-height: 0.82; letter-spacing: 0.01em;
+  font-size: clamp(64px, 23vw, 118px); line-height: 0.82; letter-spacing: 0.01em;
   margin: 2px 0 0; transform: scaleY(-1); height: 0.34em; overflow: hidden;
   color: transparent; -webkit-text-stroke: 1px #f4a63a55;
   -webkit-mask-image: linear-gradient(to top, #000 10%, transparent 100%);
@@ -124,6 +131,7 @@ h1 {
 
 /* Footer */
 footer {
+  margin-top: auto;
   border-top: 1px solid var(--rule); padding-top: 18px;
   display: flex; flex-direction: column; gap: 10px;
   font-size: 13px; color: var(--dust);
@@ -134,6 +142,9 @@ footer {
 }
 .prism { font-family: var(--mono); font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--sand); }
 </style>
+<style>html,body{margin:0}img{max-width:100%}</style>
+</head>
+<body>
 
 <div class="sky" aria-hidden="true"></div>
 <div class="sweep" aria-hidden="true"></div>
@@ -173,3 +184,6 @@ footer {
     <span class="objects">Objects in mirror are closer than they appear</span>
   </footer>
 </main>
+
+</body>
+</html>
