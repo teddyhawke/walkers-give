@@ -129,6 +129,65 @@ h1 {
   grid-column: 2; grid-row: 1 / span 2; font-size: 26px; line-height: 1;
 }
 
+/* Donate: one card that splits into three options */
+.donate {
+  background: var(--night-2); border: 1px solid var(--rule); border-radius: 6px; overflow: hidden;
+  transition: border-color .15s;
+}
+.donate:hover, .donate.open { border-color: var(--sodium); }
+.donate > .pump {
+  width: 100%; text-align: left; font: inherit; color: inherit; cursor: pointer;
+  background: transparent; border: 0; border-radius: 0;
+}
+.donate > .pump:hover { border-color: transparent; }
+.donate > .pump:focus-visible { outline-offset: -3px; }
+.plus { display: inline-block; font-size: 30px; transition: transform .25s ease; }
+.donate.open .plus { transform: rotate(45deg); }
+.options {
+  display: grid; grid-template-rows: 0fr;
+  transition: grid-template-rows .42s cubic-bezier(.2,.7,.2,1);
+}
+.donate.open .options { grid-template-rows: 1fr; }
+.options-inner { min-height: 0; overflow: hidden; display: flex; flex-direction: column; }
+.opt {
+  position: relative; display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 4px 16px;
+  padding: 16px 20px 18px; text-decoration: none; color: inherit;
+  opacity: 0; transform: translateY(-8px);
+}
+.donate.open .opt {
+  animation: opt-in .38s cubic-bezier(.2,.7,.2,1) forwards;
+  animation-delay: calc(var(--i) * 80ms + 140ms);
+}
+.opt::before {
+  content: ""; position: absolute; left: 20px; right: 20px; top: 0; height: 1px;
+  background: var(--sodium); opacity: .55; transform-origin: left; transform: scaleX(0);
+}
+.donate.open .opt::before { animation: split .32s ease-out forwards; animation-delay: calc(var(--i) * 80ms + 60ms); }
+@keyframes opt-in { to { opacity: 1; transform: none; } }
+@keyframes split { to { transform: scaleX(1); } }
+.opt-name {
+  font-family: var(--display); font-weight: 800; text-transform: uppercase;
+  font-size: 23px; line-height: 1; letter-spacing: 0.02em;
+}
+.opt-detail { grid-column: 1 / -1; font-size: 14px; line-height: 1.4; color: var(--dust); min-width: 0; }
+.opt .arrow { font-size: 22px; }
+a.opt:hover .opt-name, a.opt:hover .arrow { color: var(--sodium); }
+a.opt:focus-visible { outline: 2px solid var(--sodium); outline-offset: -3px; }
+.handle { color: var(--sand); user-select: all; overflow-wrap: anywhere; }
+.copy {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+  background: transparent; color: var(--sand); border: 1px solid var(--rule); border-radius: 4px;
+  padding: 8px 12px; cursor: pointer;
+}
+.copy:hover { border-color: var(--sodium); }
+.copy:focus-visible { outline: 2px solid var(--sodium); outline-offset: 2px; }
+.copy.done { color: var(--night); background: var(--sodium); border-color: var(--sodium); }
+@media (prefers-reduced-motion: reduce) {
+  .opt, .donate.open .opt, .opt::before, .donate.open .opt::before { animation: none; opacity: 1; transform: none; }
+  .opt::before { opacity: .55; }
+  .plus, .options { transition: none; }
+}
+
 /* Footer */
 footer {
   margin-top: auto;
@@ -142,7 +201,7 @@ footer {
 }
 .prism { font-family: var(--mono); font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--sand); }
 </style>
-<style>html,body{margin:0}img{max-width:100%}</style>
+<style>html,body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
 </head>
 <body>
 
@@ -173,17 +232,70 @@ footer {
       <span class="arrow" aria-hidden="true">&rarr;</span>
       <span class="sub">Silent auction open Mon Oct 26 through Fri Oct 30.</span>
     </a>
-    <a class="pump" id="btn-donate" href="https://bit.ly/walkers-fundraiser" target="_blank" rel="noopener">
-      <span class="label">Donate</span>
-      <span class="arrow" aria-hidden="true">&rarr;</span>
-      <span class="sub">Any amount. Tax-deductible through our fiscal sponsor, Fractured Atlas.</span>
-    </a>
+    <div class="donate" id="donate">
+      <button class="pump" id="btn-donate" type="button" aria-expanded="false" aria-controls="donate-options">
+        <span class="label">Donate</span>
+        <span class="arrow plus" aria-hidden="true">+</span>
+        <span class="sub">Any amount. Card, Venmo, or Zelle.</span>
+      </button>
+      <div class="options" id="donate-options" inert>
+        <div class="options-inner">
+        <a class="opt" id="opt-fa" href="https://bit.ly/walkers-fundraiser" target="_blank" rel="noopener" style="--i:0">
+          <span class="opt-name">Card or bank</span>
+          <span class="arrow" aria-hidden="true">&rarr;</span>
+          <span class="opt-detail">Through our fiscal sponsor, Fractured Atlas. Tax-deductible.</span>
+        </a>
+        <a class="opt" id="opt-venmo" href="https://venmo.com/u/teddyhawke" target="_blank" rel="noopener" style="--i:1">
+          <span class="opt-name">Venmo</span>
+          <span class="arrow" aria-hidden="true">&rarr;</span>
+          <span class="opt-detail">@teddyhawke. Not tax-deductible.</span>
+        </a>
+        <div class="opt" id="opt-zelle" style="--i:2">
+          <span class="opt-name">Zelle</span>
+          <button class="copy" id="copy-zelle" type="button" data-copy="teddy@ivoryfernholdings.com">Copy</button>
+          <span class="opt-detail">Send to <span class="handle" id="zelle-handle">teddy@ivoryfernholdings.com</span> in your bank's app. Not tax-deductible.</span>
+        </div>
+        </div>
+      </div>
+    </div>
   </nav>
 
   <footer>
     <span class="objects">Objects in mirror are closer than they appear</span>
   </footer>
 </main>
+
+<script>
+(function () {
+  var wrap = document.getElementById('donate');
+  var btn = document.getElementById('btn-donate');
+  var opts = document.getElementById('donate-options');
+  btn.addEventListener('click', function () {
+    var open = btn.getAttribute('aria-expanded') !== 'true';
+    btn.setAttribute('aria-expanded', String(open));
+    wrap.classList.toggle('open', open);
+    opts.inert = !open;
+  });
+  var copyBtn = document.getElementById('copy-zelle');
+  var handle = document.getElementById('zelle-handle');
+  function selectHandle() {
+    var r = document.createRange(); r.selectNodeContents(handle);
+    var sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(r);
+  }
+  copyBtn.addEventListener('click', function () {
+    var text = copyBtn.getAttribute('data-copy');
+    function done(label) {
+      copyBtn.textContent = label; copyBtn.classList.add('done');
+      setTimeout(function () { copyBtn.textContent = 'Copy'; copyBtn.classList.remove('done'); }, 1800);
+    }
+    try {
+      navigator.clipboard.writeText(text).then(function () { done('Copied'); },
+        function () { selectHandle(); done('Selected'); });
+    } catch (e) { selectHandle(); done('Selected'); }
+  });
+})();
+</script>
+
 
 </body>
 </html>
