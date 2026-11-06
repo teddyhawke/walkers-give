@@ -201,7 +201,31 @@ footer {
 }
 .prism { font-family: var(--mono); font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--sand); }
 </style>
-<style>html,body{margin:0}img{max-width:100%}[hidden]{display:none!important}.count{font-variant-numeric:tabular-nums;white-space:nowrap}.count.urgent{color:var(--sodium)}</style>
+<style>html,body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<style>
+/* Auction countdown — flickering red neon, above the CTA */
+.cd-wrap{ display:flex; flex-direction:column; align-items:center; gap:4px; margin:0 0 16px; text-align:center; }
+.cd-label{ font-family:var(--mono); font-size:11px; letter-spacing:.3em; text-transform:uppercase; color:#ff6b6b; }
+.cd-clock{
+  font-family:var(--mono); font-weight:800; font-size:clamp(34px,12vw,56px);
+  letter-spacing:.04em; color:#ff3b3b; font-variant-numeric:tabular-nums;
+  text-shadow:0 0 4px #ff2d2d,0 0 11px #ff2d2d,0 0 26px #ff0000,0 0 46px #b00000;
+  animation:neon-flicker 4s infinite;
+}
+@keyframes neon-flicker{
+  0%,17%,21%,24%,53%,57%,82%,100%{ opacity:1; text-shadow:0 0 4px #ff2d2d,0 0 11px #ff2d2d,0 0 26px #ff0000,0 0 46px #b00000; }
+  19%,23%,55%{ opacity:.66; text-shadow:0 0 3px #ff2d2d,0 0 8px #7a0000; }
+  83%{ opacity:.8; }
+}
+.cd-clock.final{ animation-duration:1.8s; color:#ff1f1f; }
+/* After the auction closes: Donate becomes the loud button; Stay Posted goes quiet */
+.donate.primary{ border-color:var(--sodium); }
+.donate.primary > .pump{ background:var(--sodium); color:var(--night); }
+.donate.primary > .pump:hover{ background:#ffb64f; }
+.donate.primary > .pump .sub{ color:#3a2a12; }
+.donate.primary > .pump .plus{ color:var(--night); }
+@media (prefers-reduced-motion: reduce){ .cd-clock{ animation:none; } }
+</style>
 </head>
 <body>
 
@@ -222,13 +246,17 @@ footer {
   </header>
 
   <nav class="actions" aria-label="Ways to give">
+    <div class="cd-wrap" id="cd-wrap" role="timer" aria-label="Time left to bid in the auction">
+      <span class="cd-label">Auction closes in</span>
+      <span class="cd-clock" id="auction-countdown">00:00:00</span>
+    </div>
     <a class="pump primary" id="btn-auction" href="https://www.32auctions.com/walkersshortfilm" target="_blank" rel="noopener">
       <span class="label">Bid in the auction</span>
       <span class="arrow" aria-hidden="true">&rarr;</span>
-      <span class="sub">Silent auction closes Fri Nov 6, 9:00 PM PT &middot; <span class="count" id="auction-countdown">closing soon</span></span>
+      <span class="sub">Silent auction closes Fri Nov 6, 9:00 PM PT.</span>
     </a>
     <!-- Shown automatically after the auction closes (9 PM PT, Fri Nov 6). Label + sub copy below is a placeholder — rewrite in your own voice. -->
-    <a class="pump primary" id="btn-subscribe" href="https://walkers-shortfilm.beehiiv.com/?modal=signup" target="_blank" rel="noopener" hidden>
+    <a class="pump" id="btn-subscribe" href="https://walkers-shortfilm.beehiiv.com/?modal=signup" target="_blank" rel="noopener" hidden>
       <span class="label">Stay posted</span>
       <span class="arrow" aria-hidden="true">&rarr;</span>
       <span class="sub">You missed the auction &mdash; subscribe for upcoming fundraising events and ways to get involved.</span>
@@ -305,6 +333,8 @@ footer {
   var auctionBtn = document.getElementById('btn-auction');
   var subscribeBtn = document.getElementById('btn-subscribe');
   var countEl = document.getElementById('auction-countdown');
+  var cdWrap = document.getElementById('cd-wrap');
+  var donateWrap = document.getElementById('donate');
   if (!auctionBtn || !subscribeBtn) return;
 
   function pad(n) { return (n < 10 ? '0' : '') + n; }
@@ -312,19 +342,21 @@ footer {
   function render() {
     var remaining = AUCTION_END - Date.now();
     if (remaining <= 0) {
+      // Auction's over: drop the countdown + bid button, reveal Stay Posted,
+      // and flip Donate to the loud (orange) button.
       auctionBtn.hidden = true;
+      if (cdWrap) cdWrap.hidden = true;
       subscribeBtn.hidden = false;
-      return false; // auction over — stop the clock
+      if (donateWrap) donateWrap.classList.add('primary');
+      return false; // stop the clock
     }
     if (countEl) {
       var totalSec = Math.floor(remaining / 1000);
       var h = Math.floor(totalSec / 3600);
       var m = Math.floor((totalSec % 3600) / 60);
       var s = totalSec % 60;
-      countEl.textContent = h > 0 ? h + 'h ' + pad(m) + 'm left'
-        : m > 0 ? m + 'm ' + pad(s) + 's left'
-        : s + 's left';
-      countEl.classList.toggle('urgent', remaining <= 3600000); // final hour
+      countEl.textContent = pad(h) + ':' + pad(m) + ':' + pad(s);
+      countEl.classList.toggle('final', remaining <= 3600000); // final hour: faster flicker
     }
     return true;
   }
