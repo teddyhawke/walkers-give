@@ -201,7 +201,7 @@ footer {
 }
 .prism { font-family: var(--mono); font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--sand); }
 </style>
-<style>html,body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<style>html,body{margin:0}img{max-width:100%}[hidden]{display:none!important}.count{font-variant-numeric:tabular-nums;white-space:nowrap}.count.urgent{color:var(--sodium)}</style>
 </head>
 <body>
 
@@ -216,11 +216,6 @@ footer {
     </div>
     <h1>Walkers</h1>
     <div class="mirror" aria-hidden="true">Walkers</div>
-    <ul class="event" aria-label="Event details">
-      <li>Advance screening</li>
-      <li>Tue Oct 27</li>
-      <li>Broadwater</li>
-    </ul>
     <p class="intro">
       Thank you for supporting Walkers. This film was built by a community of filmmakers, artists, and businesses. We're still finishing VFX, sound, color, and score. If you're able, help us get there.
     </p>
@@ -230,7 +225,13 @@ footer {
     <a class="pump primary" id="btn-auction" href="https://www.32auctions.com/walkersshortfilm" target="_blank" rel="noopener">
       <span class="label">Bid in the auction</span>
       <span class="arrow" aria-hidden="true">&rarr;</span>
-      <span class="sub">Silent auction open Mon Oct 26 through Fri Oct 30.</span>
+      <span class="sub">Silent auction closes Fri Nov 6, 9:00 PM PT &middot; <span class="count" id="auction-countdown">closing soon</span></span>
+    </a>
+    <!-- Shown automatically after the auction closes (9 PM PT, Fri Nov 6). Label + sub copy below is a placeholder — rewrite in your own voice. -->
+    <a class="pump primary" id="btn-subscribe" href="https://walkers-shortfilm.beehiiv.com/?modal=signup" target="_blank" rel="noopener" hidden>
+      <span class="label">Stay posted</span>
+      <span class="arrow" aria-hidden="true">&rarr;</span>
+      <span class="sub">You missed the auction &mdash; subscribe for upcoming fundraising events and ways to get involved.</span>
     </a>
     <div class="donate" id="donate">
       <button class="pump" id="btn-donate" type="button" aria-expanded="false" aria-controls="donate-options">
@@ -293,6 +294,46 @@ footer {
         function () { selectHandle(); done('Selected'); });
     } catch (e) { selectHandle(); done('Selected'); }
   });
+})();
+</script>
+
+<script>
+(function () {
+  // Auction closes 9:00 PM Pacific, Fri Nov 6 2026. PST = UTC-8 (DST ended Nov 2),
+  // so the fixed end instant is 05:00 UTC Nov 7. Every visitor counts to the same moment.
+  var AUCTION_END = Date.parse('2026-11-07T05:00:00Z');
+  var auctionBtn = document.getElementById('btn-auction');
+  var subscribeBtn = document.getElementById('btn-subscribe');
+  var countEl = document.getElementById('auction-countdown');
+  if (!auctionBtn || !subscribeBtn) return;
+
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+
+  function render() {
+    var remaining = AUCTION_END - Date.now();
+    if (remaining <= 0) {
+      auctionBtn.hidden = true;
+      subscribeBtn.hidden = false;
+      return false; // auction over — stop the clock
+    }
+    if (countEl) {
+      var totalSec = Math.floor(remaining / 1000);
+      var h = Math.floor(totalSec / 3600);
+      var m = Math.floor((totalSec % 3600) / 60);
+      var s = totalSec % 60;
+      countEl.textContent = h > 0 ? h + 'h ' + pad(m) + 'm left'
+        : m > 0 ? m + 'm ' + pad(s) + 's left'
+        : s + 's left';
+      countEl.classList.toggle('urgent', remaining <= 3600000); // final hour
+    }
+    return true;
+  }
+
+  if (render()) {
+    var timer = setInterval(function () {
+      if (!render()) clearInterval(timer);
+    }, 1000);
+  }
 })();
 </script>
 
