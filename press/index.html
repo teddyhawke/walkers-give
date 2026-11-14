@@ -115,6 +115,17 @@ p { margin: 0 0 14px; max-width: 64ch; }
 .video { position: relative; display: block; aspect-ratio: 16 / 9; max-width: 100%; border-radius: 6px; overflow: hidden; border: 1px solid var(--rule); background: #000; }
 .video video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .video-play, .print-only, .print-only-i { display: none; }
+.jump { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 22px; padding-top: 14px; border-top: 1px solid var(--rule); font-family: "JetBrains Mono", monospace; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; }
+.jump a { color: var(--dust); text-decoration: none; }
+.jump a:hover { color: var(--sodium); }
+html { scroll-behavior: smooth; }
+h2 { scroll-margin-top: 16px; }
+details.more { margin-top: 12px; }
+details.more > summary { list-style: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; color: var(--sodium); font-family: "JetBrains Mono", monospace; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; padding: 6px 0; }
+details.more > summary::-webkit-details-marker { display: none; }
+details.more > summary::before { content: '+'; display: inline-grid; place-items: center; width: 20px; height: 20px; border: 1px solid var(--sodium); border-radius: 50%; font-size: 14px; line-height: 1; }
+details.more[open] > summary::before { content: '\2212'; }
+details.more[open] > summary { margin-bottom: 8px; }
 .video-cta { position: absolute; left: 12px; bottom: 12px; padding: 8px 12px; border-radius: 999px; background: rgba(11,15,26,.75); font: 600 14px/1 var(--body); color: var(--sand); }
 .video:hover .video-cta { background: var(--sodium); color: var(--night); }
 
@@ -178,7 +189,7 @@ footer a { color: var(--sand); text-decoration: none; }
   @page { size: Letter; margin: 0.5in 0; background: #0b0f1a; }
   html, body { background: var(--night) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   .wrap { max-width: none; padding: 0 0.6in; }
-  .top, .walker, .actions, .todo, .screen-only { display: none !important; }
+  .top, .walker, .actions, .todo, .screen-only, .jump, details.more > summary { display: none !important; }
   .print-only { display: block; }
   .print-only-i { display: inline; }
   .print-only a { color: var(--sodium); }
@@ -230,6 +241,9 @@ footer a { color: var(--sand); text-decoration: none; }
       <a class="btn ghost" href="walkers-stills.zip" download><span class="long">Download </span>stills</a>
       <a class="btn ghost" href="https://www.youtube.com/watch?v=RRduHV5Navg" target="_blank" rel="noopener"><span class="long">Watch </span>teaser</a>
     </div>
+    <nav class="jump" aria-label="On this page">
+      <a href="#h-synopsis">Synopsis</a><a href="#h-teaser">Teaser</a><a href="#h-stills">Stills</a><a href="#h-bts">BTS</a><a href="#h-statement">Statement</a><a href="#h-team">Creatives</a><a href="#h-credits">Credits</a><a href="#h-contact">Contact</a>
+    </nav>
   </header>
 
   <section aria-labelledby="h-logline">
@@ -257,9 +271,12 @@ footer a { color: var(--sand); text-decoration: none; }
     <h2 id="h-synopsis">Synopsis</h2>
     <p class="label">Short</p>
     <p>Four friends cut through the Mojave on a late-night road trip, trading jabs about dating apps, breakups and who's really who. When the talk turns to skinwalkers, only one of them takes it seriously. Then they stop for gas.</p>
+    <details class="more">
+    <summary>Read the full synopsis</summary>
     <p class="label">Long</p>
     <p>Somewhere past midnight on an empty desert highway, Leila, Artie, Jacob and Claire are deep into a road trip and fully out of patience with each other. Claire needs a bathroom, badly. Jacob won't take anything seriously, including his relationship with Claire. Artie's heavily filtered dating-app photos are up for review. And Leila, the driver, would very much like everyone to stop saying the word "skinwalker" after dark.</p>
     <p>When they pull into a lonely gas station, the bickering turns sharper and more personal, and nobody is paying attention to what's showing up in the side mirror.</p>
+    </details>
   </section>
 
   <section aria-labelledby="h-teaser">
@@ -288,6 +305,8 @@ footer a { color: var(--sand); text-decoration: none; }
 
   <section aria-labelledby="h-bts">
     <h2 id="h-bts">Behind the scenes</h2>
+    <details class="more">
+    <summary>Show 16 photos from the set</summary>
     <p class="label">Day one &middot; Burbank</p>
     <div class="bts">
       <a class="lead" href="bts/walkers-bts-04.jpg" target="_blank" rel="noopener"><img src="bts/walkers-bts-04.jpg" alt="The car rigged under a balloon light at dusk" loading="lazy"></a>
@@ -311,6 +330,7 @@ footer a { color: var(--sand); text-decoration: none; }
       <a class="top" href="bts/walkers-bts-d2-35.jpg" target="_blank" rel="noopener"><img src="bts/walkers-bts-d2-35.jpg" alt="Christina at the monitor" loading="lazy"></a>
     </div>
     <p class="note" style="margin-top:12px">BTS photography by Logan Bole. Tap a photo to open it full size.</p>
+    </details>
   </section>
 
   <section aria-labelledby="h-statement">
@@ -364,7 +384,7 @@ footer a { color: var(--sand); text-decoration: none; }
       <div><dt>Claire</dt><dd><a class="credit-link" href="https://www.imdb.com/name/nm16636897/" target="_blank" rel="noopener">Justine Faith</a></dd></div>
       <div><dt>Dancer / Skinwalker</dt><dd><a class="credit-link" href="https://www.instagram.com/lilbitwylde" target="_blank" rel="noopener">Lilly Wylde</a></dd></div>
     </dl>
-    <p class="label">Crew</p>
+    <p class="label">Key crew</p>
     <dl class="credits">
       <div><dt>Written &amp; directed by</dt><dd>Christina Woo</dd></div>
       <div><dt>Producer</dt><dd>Teddy Hawke</dd></div>
@@ -374,6 +394,10 @@ footer a { color: var(--sand); text-decoration: none; }
       <div><dt>Original score</dt><dd>Emily Tschirhart</dd></div>
       <div><dt>VFX artist</dt><dd>John Murphy</dd></div>
       <div><dt>Colorist</dt><dd>Roy Sun</dd></div>
+    </dl>
+    <details class="more">
+    <summary>Full crew</summary>
+    <dl class="credits">
       <div><dt>Sound mixer</dt><dd>Su Lee</dd></div>
       <div><dt>Post-sound engineer</dt><dd>Su Lee</dd></div>
       <div><dt>Gaffer</dt><dd>Bailey Rye</dd></div>
@@ -387,6 +411,7 @@ footer a { color: var(--sand); text-decoration: none; }
       <div><dt>Production assistants</dt><dd>Colin Campbell, Ryan Pope, Jared Harris, Kameron Harris</dd></div>
       <div><dt>Waste management</dt><dd>Linda Hawke</dd></div>
     </dl>
+    </details>
   </section>
 
   <section aria-labelledby="h-poster">
@@ -600,6 +625,9 @@ footer a { color: var(--sand); text-decoration: none; }
   }
   requestAnimationFrame(draw);
 })();
+</script>
+<script>
+window.addEventListener('beforeprint', function () { document.querySelectorAll('details').forEach(function (d) { d.open = true; }); });
 </script>
 </body>
 </html>

@@ -34,6 +34,7 @@ with sync_playwright() as p:
     pg.emulate_media(media='print')
     # the teaser loop becomes its poster frame, still linked to YouTube; load every lazy image
     pg.evaluate("""() => {
+      document.querySelectorAll('details').forEach(d => d.open = true);
       document.querySelectorAll('img[loading]').forEach(i => i.removeAttribute('loading'));
       document.querySelectorAll('.video video').forEach(v => {
         const img = document.createElement('img'); img.src = v.getAttribute('poster');
