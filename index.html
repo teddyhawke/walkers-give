@@ -231,7 +231,16 @@ footer {
 .teaser { display: flex; flex-direction: column; gap: 8px; }
 .teaser-label { margin: 0; font-family: var(--mono); font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--sodium); }
 .video { position: relative; width: 100%; max-width: 100%; aspect-ratio: 16 / 9; border-radius: 6px; overflow: hidden; border: 1px solid var(--rule); background: #000; }
-.video iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.video { display: block; }
+.video video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+.video:focus-visible { outline: 2px solid var(--sodium); outline-offset: 3px; }
+.video-cta {
+  position: absolute; left: 10px; bottom: 10px; display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 11px 7px 9px; border-radius: 999px; background: rgba(11,15,26,.72); color: var(--sand);
+  font: 600 13px/1 var(--body); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
+  transition: background .15s, color .15s;
+}
+.video:hover .video-cta { background: var(--sodium); color: var(--night); }
 </style>
 </head>
 <body>
@@ -293,9 +302,10 @@ footer {
 
   <section class="teaser" aria-label="Walkers teaser">
     <p class="teaser-label">Watch the teaser</p>
-    <div class="video">
-      <iframe src="https://www.youtube-nocookie.com/embed/RRduHV5Navg?autoplay=1&amp;mute=1&amp;loop=1&amp;playlist=RRduHV5Navg&amp;playsinline=1&amp;rel=0&amp;cc_load_policy=0&amp;iv_load_policy=3" title="Walkers teaser" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-    </div>
+    <a class="video" href="https://www.youtube.com/watch?v=RRduHV5Navg" target="_blank" rel="noopener" aria-label="Watch the Walkers teaser with sound on YouTube">
+      <video src="teaser.mp4" poster="teaser-poster.jpg" autoplay muted loop playsinline preload="auto" aria-hidden="true"></video>
+      <span class="video-cta"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>Watch with sound</span>
+    </a>
   </section>
 
   <footer>
