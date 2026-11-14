@@ -84,11 +84,11 @@ h1 {
 .tag { color: var(--sodium); }
 .tag + .tag::before { content: "\2022"; color: var(--dust); margin-right: 10px; }
 @media (max-width: 420px) { .tag + .tag::before { margin-right: 8px; } }
-.actions { display: flex; gap: 10px; margin-top: 24px; }
+.actions { display: flex; gap: 10px; margin-top: 0; }
 .actions .btn { flex: 1 1 0; justify-content: center; min-width: 0; padding: 0 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 16px; }
 @media (min-width: 600px) { .actions .btn { flex: 0 0 auto; padding: 0 18px; } }
-@media (min-width: 600px) { .actions .btn { font-size: 20px; } }
-@media (max-width: 599px) { .actions .long { display: none; } .actions .btn:first-child { flex-grow: 1.35; } }
+@media (min-width: 600px) { .actions .btn { font-size: 20px; min-width: 150px; } }
+@media (max-width: 599px) { .actions .long { display: none; } .actions .btn:first-child { flex-grow: 1.4; } }
 .btn {
   display: inline-flex; align-items: center; gap: 10px; min-height: 48px; padding: 0 18px; box-sizing: border-box;
   border-radius: 6px; text-decoration: none; font: 800 20px/1 var(--display); text-transform: uppercase; letter-spacing: 0.03em;
@@ -115,6 +115,7 @@ p { margin: 0 0 14px; max-width: 64ch; }
 .video { position: relative; display: block; aspect-ratio: 16 / 9; max-width: 100%; border-radius: 6px; overflow: hidden; border: 1px solid var(--rule); background: #000; }
 .video video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .video-play, .print-only, .print-only-i { display: none; }
+.dl-label { margin: 26px 0 8px; font-family: "JetBrains Mono", monospace; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--dust); }
 html { scroll-behavior: smooth; }
 h2 { scroll-margin-top: 16px; }
 details.more { margin-top: 12px; }
@@ -186,7 +187,7 @@ footer a { color: var(--sand); text-decoration: none; }
   @page { size: Letter; margin: 0.5in 0; background: #0b0f1a; }
   html, body { background: var(--night) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   .wrap { max-width: none; padding: 0 0.6in; }
-  .top, .walker, .actions, .todo, .screen-only, details.more > summary { display: none !important; }
+  .top, .walker, .actions, .dl-label, .todo, .screen-only, details.more > summary { display: none !important; }
   .print-only { display: block; }
   .print-only-i { display: inline; }
   .print-only a { color: var(--sodium); }
@@ -233,10 +234,11 @@ footer a { color: var(--sand); text-decoration: none; }
       <li class="tag">Short film</li>
       <li class="tag">In post</li>
     </ul>
+    <p class="dl-label">Download</p>
     <div class="actions">
-      <a class="btn" href="walkers-press-kit.pdf" download>Download PDF</a>
-      <a class="btn ghost" href="walkers-stills.zip" download><span class="long">Download </span>stills</a>
-      <a class="btn ghost" href="https://www.youtube.com/watch?v=RRduHV5Navg" target="_blank" rel="noopener"><span class="long">Watch </span>teaser</a>
+      <a class="btn" href="walkers-press-kit.pdf" download>Press kit PDF</a>
+      <a class="btn ghost" href="walkers-stills.zip" download>Stills</a>
+      <a class="btn ghost" href="walkers-teaser.mp4" download="WALKERS-teaser.mp4">Teaser</a>
     </div>
   </header>
 
