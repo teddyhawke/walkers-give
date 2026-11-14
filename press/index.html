@@ -98,6 +98,17 @@ p { margin: 0 0 14px; max-width: 64ch; }
 .stills a:hover img { transform: scale(1.03); }
 .stills a.wide { grid-column: 1 / -1; }
 .note { font-size: 14px; color: var(--dust); }
+.bts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.bts a { display: block; border-radius: 4px; overflow: hidden; border: 1px solid var(--rule); aspect-ratio: 2 / 3; background: #000; }
+.bts img { width: 100%; height: 100%; object-fit: cover; transition: transform .3s ease; }
+.bts a:hover img { transform: scale(1.03); }
+.bts a.lead { grid-column: span 2; grid-row: span 2; aspect-ratio: auto; }
+@media (max-width: 600px) {
+  .bts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .bts a.lead { grid-row: auto; aspect-ratio: 4 / 3; }
+  .bts a.lead img { object-position: 50% 35%; }
+}
+
 
 .people { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; }
 @media (max-width: 760px) { .people { grid-template-columns: minmax(0, 1fr); } }
@@ -190,6 +201,20 @@ footer a { color: var(--sand); text-decoration: none; }
       <a class="wide" href="stills/walkers-still-02.jpg" target="_blank" rel="noopener"><img src="stills/walkers-still-02.jpg" alt="Desert ridge at dusk" loading="lazy"></a>
     </div>
     <p class="note" style="margin-top:12px">Tap a still to open it full size. All stills &copy; 2026 Prism Entertainment.</p>
+  </section>
+
+  <section aria-labelledby="h-bts">
+    <h2 id="h-bts">Behind the scenes</h2>
+    <div class="bts">
+      <a class="lead" href="bts/walkers-bts-04.jpg" target="_blank" rel="noopener"><img src="bts/walkers-bts-04.jpg" alt="The car rigged under a balloon light at dusk" loading="lazy"></a>
+      <a class="" href="bts/walkers-bts-08.jpg" target="_blank" rel="noopener"><img src="bts/walkers-bts-08.jpg" alt="Christina and Karl-Erik checking the frame at the camera" loading="lazy"></a>
+      <a class="" href="bts/walkers-bts-15.jpg" target="_blank" rel="noopener"><img src="bts/walkers-bts-15.jpg" alt="Karl-Erik shooting into the driver’s seat" loading="lazy"></a>
+      <a class="" href="bts/walkers-bts-02.jpg" target="_blank" rel="noopener"><img src="bts/walkers-bts-02.jpg" alt="Notes before a setup" loading="lazy"></a>
+      <a class="" href="bts/walkers-bts-25.jpg" target="_blank" rel="noopener"><img src="bts/walkers-bts-25.jpg" alt="Talking through a scene by the car" loading="lazy"></a>
+      <a class="" href="bts/walkers-bts-47.jpg" target="_blank" rel="noopener"><img src="bts/walkers-bts-47.jpg" alt="The back seat, dressed for the road trip" loading="lazy"></a>
+      <a class="" href="bts/walkers-bts-36.jpg" target="_blank" rel="noopener"><img src="bts/walkers-bts-36.jpg" alt="The camera department and their cart" loading="lazy"></a>
+    </div>
+    <p class="note" style="margin-top:12px">Day one, Burbank. BTS photography by <em class="todo">[Logan Bole?]</em>. Tap a photo to open it full size.</p>
   </section>
 
   <section aria-labelledby="h-statement">
