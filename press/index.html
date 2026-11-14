@@ -131,13 +131,11 @@ details.more[open] > summary { margin-bottom: 8px; }
 .stills { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
 .stills a { display: block; border-radius: 4px; overflow: hidden; border: 1px solid var(--rule); aspect-ratio: 16 / 9; background: #000; }
 .stills img { width: 100%; height: 100%; object-fit: cover; transition: transform .3s ease; }
-.stills a:hover img { transform: scale(1.03); }
 .stills a.wide { grid-column: 1 / -1; }
 .note { font-size: 14px; color: var(--dust); }
 .bts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
 .bts a { display: block; border-radius: 4px; overflow: hidden; border: 1px solid var(--rule); aspect-ratio: 2 / 3; background: #000; }
 .bts img { width: 100%; height: 100%; object-fit: cover; transition: transform .3s ease; }
-.bts a:hover img { transform: scale(1.03); }
 .bts a.lead { grid-column: span 2; grid-row: span 2; aspect-ratio: auto; }
 
 .bts2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
@@ -146,7 +144,6 @@ details.more[open] > summary { margin-bottom: 8px; }
 .bts2 a.wide img { object-position: 50% 62%; }
 .bts2 a.top img { object-position: 50% 30%; }
 .bts2 img { width: 100%; height: 100%; object-fit: cover; transition: transform .3s ease; }
-.bts2 a:hover img { transform: scale(1.03); }
 @media (max-width: 600px) {
   .bts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .bts a.lead { grid-row: auto; aspect-ratio: 4 / 3; }
@@ -356,45 +353,45 @@ footer a { color: var(--sand); text-decoration: none; }
   <section aria-labelledby="h-stills">
     <h2 id="h-stills">Stills</h2>
     <div class="stills">
-      <a class="wide" href="stills/walkers-still-01.jpg" target="_blank" rel="noopener"><img src="stills/walkers-still-01.jpg" alt="The four friends packed into the car at night" loading="lazy"></a>
-      <a href="stills/walkers-still-03.jpg" target="_blank" rel="noopener"><img src="stills/walkers-still-03.jpg" alt="Jacob and Leila leaning over from the back seat" loading="lazy"></a>
-      <a href="stills/walkers-still-04.jpg" target="_blank" rel="noopener"><img src="stills/walkers-still-04.jpg" alt="Artie in glasses, lit by gas station lights" loading="lazy"></a>
-      <a href="stills/walkers-still-05.jpg" target="_blank" rel="noopener"><img src="stills/walkers-still-05.jpg" alt="Leila looking up from the driver's seat, frightened" loading="lazy"></a>
-      <a href="stills/walkers-still-06.jpg" target="_blank" rel="noopener"><img src="stills/walkers-still-06.jpg" alt="Hands scrolling a dating app in the dark" loading="lazy"></a>
-      <a class="wide" href="stills/walkers-still-07.jpg" target="_blank" rel="noopener"><img src="stills/walkers-still-07.jpg" alt="The car parked under the canopy of an empty desert gas station" loading="lazy"></a>
-      <a class="wide" href="stills/walkers-still-02.jpg" target="_blank" rel="noopener"><img src="stills/walkers-still-02.jpg" alt="Desert ridge at dusk" loading="lazy"></a>
+      <a class="wide"><img src="stills/walkers-still-01.jpg" alt="The four friends packed into the car at night" loading="lazy"></a>
+      <a><img src="stills/walkers-still-03.jpg" alt="Jacob and Leila leaning over from the back seat" loading="lazy"></a>
+      <a><img src="stills/walkers-still-04.jpg" alt="Artie in glasses, lit by gas station lights" loading="lazy"></a>
+      <a><img src="stills/walkers-still-05.jpg" alt="Leila looking up from the driver's seat, frightened" loading="lazy"></a>
+      <a><img src="stills/walkers-still-06.jpg" alt="Hands scrolling a dating app in the dark" loading="lazy"></a>
+      <a class="wide"><img src="stills/walkers-still-07.jpg" alt="The car parked under the canopy of an empty desert gas station" loading="lazy"></a>
+      <a class="wide"><img src="stills/walkers-still-02.jpg" alt="Desert ridge at dusk" loading="lazy"></a>
     </div>
-    <p class="note" style="margin-top:12px">Tap a still to open it full size. All stills &copy; 2026 Prism Entertainment.</p>
+    <p class="note" style="margin-top:12px">All stills &copy; 2026 Prism Entertainment. Need hi-res files? <a href="#request">Request them here</a>.</p>
   </section>
 
   <section aria-labelledby="h-bts">
     <h2 id="h-bts">Behind the scenes</h2>
     <div class="bts2 bts-feature">
-      <a class="" href="bts/walkers-bts-d2-41.jpg" target="_blank" rel="noopener"><img src="bts/walkers-bts-d2-41.jpg" alt="The crew working under the gas station canopy" loading="lazy"></a>
-      <a class="" href="bts/walkers-bts-d2-96.jpg" target="_blank" rel="noopener"><img src="bts/walkers-bts-d2-96.jpg" alt="Christina and Karl-Erik lining up a shot" loading="lazy"></a>
+      <a class=""><img src="bts/walkers-bts-d2-41.jpg" alt="The crew working under the gas station canopy" loading="lazy"></a>
+      <a class=""><img src="bts/walkers-bts-d2-96.jpg" alt="Christina and Karl-Erik lining up a shot" loading="lazy"></a>
     </div>
-    <p class="note" style="margin-top:12px">BTS photography by Logan Bole. Tap a photo to open it full size.</p>
+    <p class="note" style="margin-top:12px">BTS photography by Logan Bole.</p>
     <details class="more">
     <summary>Show 14 more</summary>
     <p class="label">Day one &middot; Burbank</p>
     <div class="bts">
-      <a class="lead" href="bts/walkers-bts-04.jpg" target="_blank" rel="noopener"><img src="bts/walkers-bts-04.jpg" alt="The car rigged under a balloon light at dusk" loading="lazy"></a>
-      <a class="" href="bts/walkers-bts-08.jpg" target="_blank" rel="noopener"><img src="bts/walkers-bts-08.jpg" alt="Christina and Karl-Erik checking the frame at the camera" loading="lazy"></a>
-      <a class="" href="bts/walkers-bts-15.jpg" target="_blank" rel="noopener"><img src="bts/walkers-bts-15.jpg" alt="Karl-Erik shooting into the driver’s seat" loading="lazy"></a>
-      <a class="" href="bts/walkers-bts-02.jpg" target="_blank" rel="noopener"><img src="bts/walkers-bts-02.jpg" alt="Notes before a setup" loading="lazy"></a>
-      <a class="" href="bts/walkers-bts-25.jpg" target="_blank" rel="noopener"><img src="bts/walkers-bts-25.jpg" alt="Talking through a scene by the car" loading="lazy"></a>
-      <a class="" href="bts/walkers-bts-47.jpg" target="_blank" rel="noopener"><img src="bts/walkers-bts-47.jpg" alt="The back seat, dressed for the road trip" loading="lazy"></a>
-      <a class="" href="bts/walkers-bts-36.jpg" target="_blank" rel="noopener"><img src="bts/walkers-bts-36.jpg" alt="The camera department and their cart" loading="lazy"></a>
+      <a class="lead"><img src="bts/walkers-bts-04.jpg" alt="The car rigged under a balloon light at dusk" loading="lazy"></a>
+      <a class=""><img src="bts/walkers-bts-08.jpg" alt="Christina and Karl-Erik checking the frame at the camera" loading="lazy"></a>
+      <a class=""><img src="bts/walkers-bts-15.jpg" alt="Karl-Erik shooting into the driver’s seat" loading="lazy"></a>
+      <a class=""><img src="bts/walkers-bts-02.jpg" alt="Notes before a setup" loading="lazy"></a>
+      <a class=""><img src="bts/walkers-bts-25.jpg" alt="Talking through a scene by the car" loading="lazy"></a>
+      <a class=""><img src="bts/walkers-bts-47.jpg" alt="The back seat, dressed for the road trip" loading="lazy"></a>
+      <a class=""><img src="bts/walkers-bts-36.jpg" alt="The camera department and their cart" loading="lazy"></a>
     </div>
     <p class="label" style="margin-top:28px">Day two &middot; Apple Valley</p>
     <div class="bts2">
-      <a class="wide" href="bts/walkers-bts-d2-06.jpg" target="_blank" rel="noopener"><img src="bts/walkers-bts-d2-06.jpg" alt="The gas station lit up alone in the desert night" loading="lazy"></a>
-      <a class="" href="bts/walkers-bts-d2-45.jpg" target="_blank" rel="noopener"><img src="bts/walkers-bts-d2-45.jpg" alt="The car rigged with lights and flags at the pumps" loading="lazy"></a>
-      <a class="" href="bts/walkers-bts-d2-26.jpg" target="_blank" rel="noopener"><img src="bts/walkers-bts-d2-26.jpg" alt="Rolling on a scene beside the car" loading="lazy"></a>
-      <a class="" href="bts/walkers-bts-d2-09.jpg" target="_blank" rel="noopener"><img src="bts/walkers-bts-d2-09.jpg" alt="Christina watching a take on the roadside" loading="lazy"></a>
-      <a class="" href="bts/walkers-bts-d2-31.jpg" target="_blank" rel="noopener"><img src="bts/walkers-bts-d2-31.jpg" alt="Two of the lighting crew between setups" loading="lazy"></a>
-      <a class="" href="bts/walkers-bts-d2-04.jpg" target="_blank" rel="noopener"><img src="bts/walkers-bts-d2-04.jpg" alt="Cast and crew at the end of the night" loading="lazy"></a>
-      <a class="top" href="bts/walkers-bts-d2-35.jpg" target="_blank" rel="noopener"><img src="bts/walkers-bts-d2-35.jpg" alt="Christina at the monitor" loading="lazy"></a>
+      <a class="wide"><img src="bts/walkers-bts-d2-06.jpg" alt="The gas station lit up alone in the desert night" loading="lazy"></a>
+      <a class=""><img src="bts/walkers-bts-d2-45.jpg" alt="The car rigged with lights and flags at the pumps" loading="lazy"></a>
+      <a class=""><img src="bts/walkers-bts-d2-26.jpg" alt="Rolling on a scene beside the car" loading="lazy"></a>
+      <a class=""><img src="bts/walkers-bts-d2-09.jpg" alt="Christina watching a take on the roadside" loading="lazy"></a>
+      <a class=""><img src="bts/walkers-bts-d2-31.jpg" alt="Two of the lighting crew between setups" loading="lazy"></a>
+      <a class=""><img src="bts/walkers-bts-d2-04.jpg" alt="Cast and crew at the end of the night" loading="lazy"></a>
+      <a class="top"><img src="bts/walkers-bts-d2-35.jpg" alt="Christina at the monitor" loading="lazy"></a>
     </div>
     </details>
   </section>
@@ -510,7 +507,7 @@ footer a { color: var(--sand); text-decoration: none; }
   <div class="pair pair-end">
   <section aria-labelledby="h-poster">
     <h2 id="h-poster">Poster</h2>
-    <a class="poster" href="poster/walkers-poster-placeholder.jpg" target="_blank" rel="noopener"><img src="poster/walkers-poster-placeholder.jpg" alt="WALKERS key art: a desert gas station at night, ringed by Joshua trees, something crouched on the roof" loading="lazy"></a>
+    <a class="poster"><img src="poster/walkers-poster-placeholder.jpg" alt="WALKERS key art: a desert gas station at night, ringed by Joshua trees, something crouched on the roof" loading="lazy"></a>
     <p class="poster-note">Placeholder key art. Official poster coming Dec 2026.</p>
   </section>
   <section aria-labelledby="h-contact">

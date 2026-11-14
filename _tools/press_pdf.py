@@ -34,12 +34,17 @@ with sync_playwright() as p:
     pg.emulate_media(media='print')
     # the teaser loop becomes its poster frame, still linked to YouTube; load every lazy image
     pg.evaluate("""() => {
+      // links in a PDF can't be relative: point them at the live site
+      document.querySelectorAll('a[href]').forEach(a => {
+        const h = a.getAttribute('href');
+        if (!/^(https?:|mailto:)/.test(h)) a.setAttribute('href', new URL(h, 'https://walkers.prismentmt.com/press/').href);
+      });
       document.querySelectorAll('details').forEach(d => d.open = true);
       // BTS: one even mosaic of every photo, for a single page
       const bts = document.querySelector('section[aria-labelledby="h-bts"]');
       if (bts) {
         const grid = document.createElement('div'); grid.className = 'bts-mosaic';
-        bts.querySelectorAll('a[href^="bts/"]').forEach(a => { const c = a.cloneNode(true); c.className = ''; grid.appendChild(c); });
+        bts.querySelectorAll('img[src^="bts/"]').forEach(img => { const c = document.createElement('a'); c.appendChild(img.cloneNode(true)); grid.appendChild(c); });
         bts.querySelector('h2').after(grid);
       }
       document.querySelectorAll('img[loading]').forEach(i => i.removeAttribute('loading'));
