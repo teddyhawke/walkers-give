@@ -54,10 +54,16 @@ h1 {
   font-family: var(--display); font-weight: 900; text-transform: uppercase; margin: 6px 0 0;
   font-size: clamp(60px, 18vw, 150px); line-height: 0.82; letter-spacing: 0.01em;
 }
-.tags { display: flex; flex-wrap: wrap; gap: 6px 14px; margin: 14px 0 0; padding: 0; list-style: none; }
+.tags { display: flex; flex-wrap: nowrap; gap: 10px; margin: 14px 0 0; padding: 0; list-style: none; white-space: nowrap; }
+.tags .tag { letter-spacing: 0.12em; }
+@media (max-width: 420px) { .tags { gap: 8px; } .tags .tag { font-size: 11px; letter-spacing: 0.08em; } }
 .tag { color: var(--sodium); }
-.tag + .tag::before { content: "\2022"; color: var(--dust); margin-right: 14px; }
-.actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
+.tag + .tag::before { content: "\2022"; color: var(--dust); margin-right: 10px; }
+@media (max-width: 420px) { .tag + .tag::before { margin-right: 8px; } }
+.actions { display: flex; gap: 10px; margin-top: 24px; }
+.actions .btn { flex: 1 1 0; justify-content: center; min-width: 0; padding: 0 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 18px; }
+@media (min-width: 600px) { .actions .btn { flex: 0 0 auto; padding: 0 18px; } }
+@media (min-width: 600px) { .actions .btn { font-size: 20px; } }
 .btn {
   display: inline-flex; align-items: center; gap: 10px; min-height: 48px; padding: 0 18px; box-sizing: border-box;
   border-radius: 6px; text-decoration: none; font: 800 20px/1 var(--display); text-transform: uppercase; letter-spacing: 0.03em;
@@ -93,11 +99,11 @@ p { margin: 0 0 14px; max-width: 64ch; }
 .stills a.wide { grid-column: 1 / -1; }
 .note { font-size: 14px; color: var(--dust); }
 
-.people { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; }
-@media (max-width: 600px) { .people { grid-template-columns: minmax(0, 1fr); } }
+.people { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; }
+@media (max-width: 760px) { .people { grid-template-columns: minmax(0, 1fr); } }
 .role { font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--sodium); margin: 0 0 10px; }
 .person p { font-size: 16px; }
-.headshot { width: 88px; height: 88px; border-radius: 50%; background: var(--night-2); border: 1px dashed var(--rule); display: grid; place-items: center; color: var(--dust); font: 500 11px/1 var(--mono); letter-spacing: .1em; margin-bottom: 14px; }
+.headshot { width: 88px; height: 88px; border-radius: 50%; object-fit: cover; background: var(--night-2); border: 1px solid var(--rule); margin-bottom: 14px; }
 
 .credits { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 28px; margin: 0; }
 @media (max-width: 520px) { .credits { grid-template-columns: minmax(0, 1fr); } }
@@ -129,8 +135,8 @@ footer a { color: var(--sand); text-decoration: none; }
       <li class="tag">In post</li>
     </ul>
     <div class="actions">
-      <a class="btn" href="walkers-stills.zip" download>Download stills &darr;</a>
-      <a class="btn ghost" href="https://www.youtube.com/watch?v=RRduHV5Navg" target="_blank" rel="noopener">Watch the teaser &nearr;</a>
+      <a class="btn" href="walkers-stills.zip" download>Download stills</a>
+      <a class="btn ghost" href="https://www.youtube.com/watch?v=RRduHV5Navg" target="_blank" rel="noopener">Watch the teaser</a>
     </div>
   </header>
 
@@ -144,11 +150,11 @@ footer a { color: var(--sand); text-decoration: none; }
     <dl class="facts">
       <div><dt>Title</dt><dd>WALKERS</dd></div>
       <div><dt>Genre</dt><dd>Horror-comedy</dd></div>
-      <div><dt>Runtime</dt><dd>Approx. 6 minutes</dd></div>
-      <div><dt>Status</dt><dd>In post-production</dd></div>
-      <div><dt>Premiere</dt><dd>Dec 2026 (TBC)</dd></div>
+      <div><dt>Runtime</dt><dd>6 min 30 sec</dd></div>
+      <div><dt>Status</dt><dd>In post-production, final cut Dec 2026</dd></div>
+      <div><dt>Premiere</dt><dd>TBD, festival run first</dd></div>
       <div><dt>Country / Language</dt><dd>USA / English</dd></div>
-      <div><dt>Filmed in</dt><dd>Apple Valley, California</dd></div>
+      <div><dt>Filmed in</dt><dd>Apple Valley &amp; Burbank, California</dd></div>
       <div><dt>Camera</dt><dd>ARRI Alexa 35</dd></div>
       <div><dt>Production company</dt><dd>Prism Entertainment</dd></div>
       <div><dt>Director</dt><dd>Christina Woo</dd></div>
@@ -199,16 +205,22 @@ footer a { color: var(--sand); text-decoration: none; }
     <h2 id="h-team">Key creatives</h2>
     <div class="people">
       <div class="person">
-        <div class="headshot" aria-hidden="true">PHOTO</div>
+        <img class="headshot" src="team/christina-woo.jpg" alt="Christina Woo" width="88" height="88" loading="lazy">
         <h3>Christina Woo</h3>
         <p class="role">Writer &amp; Director</p>
         <p>Christina Woo is a writer and director who comes to live action from animation. Walkers is her first live-action film. Her writing is known for quick, dry, very online dialogue, built around characters who roast each other to avoid saying what they actually feel. <em class="todo">[One more line: past work, a festival, or what's next.]</em></p>
       </div>
       <div class="person">
-        <div class="headshot" aria-hidden="true">PHOTO</div>
+        <img class="headshot" src="team/teddy-hawke.jpg" alt="Teddy Hawke" width="88" height="88" loading="lazy">
         <h3>Teddy Hawke</h3>
         <p class="role">Producer</p>
         <p>Teddy Hawke is an independent film producer and the founder of Prism Entertainment, a production and development company that works with independent artists on micro- and low-budget projects. He came to film from marketing, and he focuses on contained, producible genre stories with room to grow. Walkers is the first step toward a skinwalker anthology series.</p>
+      </div>
+      <div class="person">
+        <img class="headshot" src="team/karl-erik-mills.jpg" alt="Karl-Erik Mills" width="88" height="88" loading="lazy">
+        <h3>Karl-Erik Mills</h3>
+        <p class="role">Director of Photography</p>
+        <p>Karl-Erik Mills shot Walkers on the ARRI Alexa 35. He built the film's split look: tight, phone-lit interiors packed into a moving car, against wide, patient frames of the empty desert and a gas station glowing in the dark. <em class="todo">[One more line: background, past work, or what he shoots.]</em></p>
       </div>
     </div>
   </section>
@@ -225,7 +237,7 @@ footer a { color: var(--sand); text-decoration: none; }
       <div><dt>Leila</dt><dd>Sophia Delphi</dd></div>
       <div><dt>Jacob</dt><dd>Luke Steinborn</dd></div>
       <div><dt>Artie</dt><dd>Jammel Ives</dd></div>
-      <div><dt>Claire</dt><dd><em class="todo">[Name]</em></dd></div>
+      <div><dt>Claire</dt><dd>Justine Faith</dd></div>
     </dl>
     <p class="label">Crew</p>
     <dl class="credits">
