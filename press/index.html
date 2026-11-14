@@ -571,34 +571,123 @@ footer a { color: var(--sand); text-decoration: none; }
     lastX = x;
     var go = st.go || 0;
     var A = animal(ph, go, st.look || 0, t), Hm = human(ph, go), Tr = tree(t);
-    var pose, treeW = 0;
+    var pose, treeW = 0, beast = 1;
     switch (st.form) {
       case 'A':  pose = A; break;
-      case 'H':  pose = Hm; break;
-      case 'T':  pose = Tr; treeW = 1; break;
-      case 'AT': pose = blend(A, Tr, st.k); treeW = st.k; break;
-      case 'TH': pose = blend(Tr, Hm, st.k); treeW = 1 - st.k; break;
-      case 'HA': pose = blend(Hm, A, st.k); break;
-      case 'TA': pose = blend(Tr, A, st.k); treeW = 1 - st.k; break;
+      case 'H':  pose = Hm; beast = 0.4; break;
+      case 'T':  pose = Tr; treeW = 1; beast = 0; break;
+      case 'AT': pose = blend(A, Tr, st.k); treeW = st.k; beast = 1 - st.k; break;
+      case 'TH': pose = blend(Tr, Hm, st.k); treeW = 1 - st.k; beast = 0.4 * st.k; break;
+      case 'HA': pose = blend(Hm, A, st.k); beast = 0.4 + 0.6 * st.k; break;
+      case 'TA': pose = blend(Tr, A, st.k); treeW = 1 - st.k; beast = st.k; break;
     }
     var gy = st.gy, WX = 1.25, TH = 1.75;
     var X = function (p) { return x + p.x * S * WX; }, Y = function (p) { return gy - p.y * S; };
     ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    var hsh = function (i) { var v = Math.sin(i * 127.1 + 311.7) * 43758.5453; return v - Math.floor(v); };
+    var shiver = Math.sin(t * 31) * 0.5 + Math.sin(t * 47) * 0.5;          // fine tremor for the bristles
+    // walk a polyline in screen space, calling fn(x, y, tx, ty, i) every `step` px (tx,ty = unit tangent)
+    function along(pts, step, fn) {
+      var n = 0;
+      for (var i = 1; i < pts.length; i++) {
+        var ax = X(pts[i - 1]), ay = Y(pts[i - 1]), bx = X(pts[i]), by = Y(pts[i]);
+        var L = Math.hypot(bx - ax, by - ay) || 1, tx = (bx - ax) / L, ty = (by - ay) / L;
+        for (var d = step * 0.5; d < L; d += step) fn(ax + tx * d, ay + ty * d, tx, ty, n++ + i * 97);
+      }
+    }
     function body(col, pad, glow) {
       ctx.save();
       ctx.strokeStyle = ctx.fillStyle = col;
-      if (glow) { ctx.shadowColor = glow; ctx.shadowBlur = Math.max(4, S * 0.08); }
+      if (glow) { ctx.shadowColor = glow; ctx.shadowBlur = Math.max(3, S * 0.05); }
       function line(pts, w) {
         ctx.lineWidth = w * S * TH + pad * 2; ctx.beginPath(); ctx.moveTo(X(pts[0]), Y(pts[0]));
         for (var i = 1; i < pts.length; i++) ctx.lineTo(X(pts[i]), Y(pts[i]));
         ctx.stroke();
       }
+      // ragged fur/scale edge along a limb: short backward-raked barbs on both sides
+      function bristle(pts, w, seed) {
+        if (beast < 0.05) return;
+        var half = w * S * TH * 0.5;
+        ctx.save(); if (glow) { ctx.globalAlpha = 0.45; ctx.shadowBlur = 0; }   // only a faint catch-light on the hairs
+        ctx.lineWidth = Math.max(1, S * 0.008) + (glow ? 0.6 : 0);
+        along(pts, Math.max(4, S * 0.05), function (px, py, tx, ty, i) {
+          for (var side = -1; side <= 1; side += 2) {
+            var r = hsh(i * 2 + side + seed); if (r < 0.3) continue;
+            var len = S * (0.01 + 0.06 * Math.pow(r, 3)) * beast;
+            var nx = -ty * side, ny = tx * side;
+            var bx = px + nx * half * 0.8, by = py + ny * half * 0.8;
+            var rake = 0.3 + 0.9 * hsh(i + seed * 3) + 0.15 * shiver * r;
+            ctx.beginPath(); ctx.moveTo(bx - tx * 1.5, by - ty * 1.5);
+            ctx.lineTo(bx + (nx - tx * rake) * len, by + (ny - ty * rake) * len); ctx.stroke();
+          }
+        });
+        ctx.restore();
+      }
+      // knobbed joints and hooked claws
+      function knuckles(chain, w) {
+        if (beast < 0.05) return;
+        ctx.beginPath(); ctx.arc(X(chain[1]), Y(chain[1]), w * S * TH * 0.75 + pad, 0, 7); ctx.fill();
+        var fx = X(chain[2]), fy = Y(chain[2]);
+        ctx.lineWidth = Math.max(1, S * 0.01) + pad * 0.8;
+        for (var k = 0; k < 3; k++) {
+          var a0 = -0.5 + k * 0.45, len = S * 0.055 * beast;
+          ctx.beginPath(); ctx.moveTo(fx, fy);
+          ctx.quadraticCurveTo(fx + Math.cos(a0) * len * 0.7, fy - len * 0.25 + Math.sin(a0) * len * 0.3,
+                               fx + Math.cos(a0) * len, fy + len * 0.15 + Math.sin(a0) * len * 0.5);
+          ctx.stroke();
+        }
+      }
+      var spine = [pose.hip, pose.mid, pose.chest, pose.head];
       line(pose.legs[1], pose.limb * 0.85); line(pose.arms[1], pose.limb * 0.85);
+      bristle(pose.legs[1], pose.limb * 0.85, 11); bristle(pose.arms[1], pose.limb * 0.85, 23);
+      knuckles(pose.legs[1], pose.limb * 0.85); knuckles(pose.arms[1], pose.limb * 0.85);
       line([pose.hip, pose.mid, pose.chest], pose.torso);
       line([pose.chest, pose.head], pose.limb * 1.2);
-      ctx.beginPath(); ctx.arc(X(pose.head), Y(pose.head), pose.hr * S * 1.35 + pad, 0, Math.PI * 2); ctx.fill();
+      // belly fur hanging under the torso
+      bristle([pose.hip, pose.mid, pose.chest], pose.torso, 41);
+      // ridge of uneven spines down the back, raked toward the tail
+      if (beast > 0.05) {
+        var tw = pose.torso * S * TH * 0.5;
+        along(spine, Math.max(3, S * 0.032), function (px, py, tx, ty, i) {
+          var nx = ty, ny = -tx; if (ny > 0) { nx = -nx; ny = -ny; }        // the side facing up
+          var r = hsh(i + 7), len = S * (0.035 + 0.07 * r * r) * beast * (1 + 0.08 * shiver);
+          var bw = S * 0.013 + pad;
+          var bx = px + nx * tw * 0.8, by = py + ny * tw * 0.8;
+          ctx.beginPath();
+          ctx.moveTo(bx - tx * bw, by - ty * bw); ctx.lineTo(bx + tx * bw, by + ty * bw);
+          ctx.lineTo(bx + (nx - tx * 0.6) * len, by + (ny - ty * 0.6) * len); ctx.closePath(); ctx.fill();
+        });
+      }
+      // head: a long wedge skull with a hanging jaw, rounder when it's a person
+      var hx = X(pose.head), hy = Y(pose.head), cx0 = X(pose.chest), cy0 = Y(pose.chest);
+      var ang = Math.atan2(hy - cy0, hx - cx0), hr = pose.hr * S * 1.35;
+      ctx.save(); ctx.translate(hx, hy); ctx.rotate(ang * beast * 0.6);
+      ctx.beginPath(); ctx.ellipse(hr * 0.35 * beast, 0, hr * (1 + 0.7 * beast) + pad, hr * (1 - 0.25 * beast) + pad, 0, 0, 7); ctx.fill();
+      if (beast > 0.05) {
+        ctx.lineWidth = Math.max(1.5, S * 0.018) + pad;                     // slack jaw
+        ctx.beginPath(); ctx.moveTo(-hr * 0.2, hr * 0.5); ctx.lineTo(hr * 1.9 * beast, hr * (0.75 + 0.15 * shiver)); ctx.stroke();
+        ctx.lineWidth = Math.max(1, S * 0.009) + pad * 0.8;                 // crown of spikes
+        for (var k = 0; k < 5; k++) { var a = -2.3 - k * 0.22, l = hr * (0.6 + 0.5 * hsh(k + 3)) * beast;
+          ctx.beginPath(); ctx.moveTo(Math.cos(a) * hr * 0.8, Math.sin(a) * hr * 0.8); ctx.lineTo(Math.cos(a) * (hr * 0.8 + l), Math.sin(a) * (hr * 0.8 + l)); ctx.stroke(); }
+      }
+      ctx.restore();
       line(pose.legs[0], pose.limb); line(pose.arms[0], pose.limb);
+      bristle(pose.legs[0], pose.limb, 57); bristle(pose.arms[0], pose.limb, 73);
+      knuckles(pose.legs[0], pose.limb); knuckles(pose.arms[0], pose.limb);
+      // scales: scattered moonlit flecks and broken crescents, never a grid
+      if (!glow && pad === 0 && beast > 0.05) {
+        ctx.lineWidth = 1; var tw2 = pose.torso * S * TH * 0.5;
+        along([pose.hip, pose.mid, pose.chest], Math.max(2, S * 0.018), function (px, py, tx, ty, i) {
+          var r1 = hsh(i * 3 + 1), r2 = hsh(i * 3 + 2), r3 = hsh(i * 3 + 5);
+          if (r3 < 0.35) return;
+          var o = (r1 * 2 - 1) * tw2 * 0.8, sx = px - ty * o, sy = py + tx * o, rr = S * (0.006 + 0.014 * r2);
+          ctx.strokeStyle = 'rgba(150,170,215,' + (0.06 + 0.16 * r3 * (o < 0 ? 1 : 0.5)) * beast + ')';   // lit from above
+          var a0 = Math.atan2(ty, tx) + Math.PI * (0.7 + 0.3 * r1);
+          ctx.beginPath(); ctx.arc(sx, sy, rr, a0, a0 + Math.PI * (0.4 + 0.5 * r2)); ctx.stroke();
+        });
+      }
       if (treeW > 0.02) {
+        ctx.strokeStyle = ctx.fillStyle = col;
         ctx.lineWidth = 0.022 * S + pad * 2;
         [pose.arms[0][2], pose.arms[1][2], pose.head].forEach(function (tip, j) {
           for (var k = 0; k < 11; k++) {
@@ -611,7 +700,7 @@ footer a { color: var(--sand); text-decoration: none; }
       }
       ctx.restore();
     }
-    var rim = Math.max(1.2, S * 0.017);
+    var rim = Math.max(1, S * 0.012);
     body('rgba(200,214,240,0.58)', rim, 'rgba(170,195,240,0.5)');   // softer moonlight rim
     body('#05070c', 0, null);
     if (st.eyes > 0.01) {
