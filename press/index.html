@@ -85,9 +85,10 @@ h1 {
 .tag + .tag::before { content: "\2022"; color: var(--dust); margin-right: 10px; }
 @media (max-width: 420px) { .tag + .tag::before { margin-right: 8px; } }
 .actions { display: flex; gap: 10px; margin-top: 24px; }
-.actions .btn { flex: 1 1 0; justify-content: center; min-width: 0; padding: 0 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 18px; }
+.actions .btn { flex: 1 1 0; justify-content: center; min-width: 0; padding: 0 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 16px; }
 @media (min-width: 600px) { .actions .btn { flex: 0 0 auto; padding: 0 18px; } }
 @media (min-width: 600px) { .actions .btn { font-size: 20px; } }
+@media (max-width: 599px) { .actions .long { display: none; } }
 .btn {
   display: inline-flex; align-items: center; gap: 10px; min-height: 48px; padding: 0 18px; box-sizing: border-box;
   border-radius: 6px; text-decoration: none; font: 800 20px/1 var(--display); text-transform: uppercase; letter-spacing: 0.03em;
@@ -171,6 +172,26 @@ p { margin: 0 0 14px; max-width: 64ch; }
 
 footer { margin-top: 64px; padding-top: 18px; border-top: 1px solid var(--rule); display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; color: #6c7286; font-size: 11px; }
 footer a { color: var(--sand); text-decoration: none; }
+
+@media print {
+  @page { size: Letter; margin: 0.5in 0; }
+  html, body { background: var(--night) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .wrap { max-width: none; padding: 0 0.6in; }
+  .top, .walker, .actions, .video-cta, .todo { display: none !important; }
+  section { margin-top: 34px; }
+  h2 { break-after: avoid; }
+  .person, .stills a, .bts a, .bts2 a, .credits > div, .poster, .video, .facts > *, blockquote, figure { break-inside: avoid; }
+  .people { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+  .stills img, .bts img, .bts2 img { transition: none; }
+  a { text-decoration: none; }
+  .label { break-after: avoid; }
+  .video { max-width: 72%; }
+  .stills { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .stills a.wide { grid-column: span 2; grid-row: span 2; aspect-ratio: auto; }
+  .bts { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .bts2 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .bts2 a.wide { grid-column: 1 / -1; }
+}
 </style>
 </head>
 <body>
@@ -196,8 +217,9 @@ footer a { color: var(--sand); text-decoration: none; }
       <li class="tag">In post</li>
     </ul>
     <div class="actions">
-      <a class="btn" href="walkers-stills.zip" download>Download stills</a>
-      <a class="btn ghost" href="https://www.youtube.com/watch?v=RRduHV5Navg" target="_blank" rel="noopener">Watch the teaser</a>
+      <a class="btn" href="walkers-press-kit.pdf" download>Press kit PDF</a>
+      <a class="btn ghost" href="walkers-stills.zip" download><span class="long">Download </span>stills</a>
+      <a class="btn ghost" href="https://www.youtube.com/watch?v=RRduHV5Navg" target="_blank" rel="noopener"><span class="long">Watch </span>teaser</a>
     </div>
   </header>
 
@@ -310,7 +332,6 @@ footer a { color: var(--sand); text-decoration: none; }
         <img class="headshot" src="team/karl-erik-mills.jpg" alt="Karl-Erik Mills" width="88" height="88" loading="lazy">
         <h3>Karl-Erik Mills</h3>
         <p class="role">Director of Photography</p>
-        <p class="plinks"><a href="https://www.karlerikmills.com/cinematography" target="_blank" rel="noopener">karlerikmills.com</a></p>
         <p class="plinks"><a href="https://www.karlerikmills.com/cinematography" target="_blank" rel="noopener">karlerikmills.com</a></p>
         <p>Karl-Erik Mills shot Walkers on the ARRI Alexa 35. He built the film's split look: tight, phone-lit interiors packed into a moving car, against wide, patient frames of the empty desert and a gas station glowing in the dark. <em class="todo">[One more line: background, past work, or what he shoots.]</em></p>
       </div>
