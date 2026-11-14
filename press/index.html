@@ -115,9 +115,6 @@ p { margin: 0 0 14px; max-width: 64ch; }
 .video { position: relative; display: block; aspect-ratio: 16 / 9; max-width: 100%; border-radius: 6px; overflow: hidden; border: 1px solid var(--rule); background: #000; }
 .video video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .video-play, .print-only, .print-only-i { display: none; }
-.jump { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 22px; padding-top: 14px; border-top: 1px solid var(--rule); font-family: "JetBrains Mono", monospace; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; }
-.jump a { color: var(--dust); text-decoration: none; }
-.jump a:hover { color: var(--sodium); }
 html { scroll-behavior: smooth; }
 h2 { scroll-margin-top: 16px; }
 details.more { margin-top: 12px; }
@@ -189,7 +186,7 @@ footer a { color: var(--sand); text-decoration: none; }
   @page { size: Letter; margin: 0.5in 0; background: #0b0f1a; }
   html, body { background: var(--night) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   .wrap { max-width: none; padding: 0 0.6in; }
-  .top, .walker, .actions, .todo, .screen-only, .jump, details.more > summary { display: none !important; }
+  .top, .walker, .actions, .todo, .screen-only, details.more > summary { display: none !important; }
   .print-only { display: block; }
   .print-only-i { display: inline; }
   .print-only a { color: var(--sodium); }
@@ -241,9 +238,6 @@ footer a { color: var(--sand); text-decoration: none; }
       <a class="btn ghost" href="walkers-stills.zip" download><span class="long">Download </span>stills</a>
       <a class="btn ghost" href="https://www.youtube.com/watch?v=RRduHV5Navg" target="_blank" rel="noopener"><span class="long">Watch </span>teaser</a>
     </div>
-    <nav class="jump" aria-label="On this page">
-      <a href="#h-synopsis">Synopsis</a><a href="#h-teaser">Teaser</a><a href="#h-stills">Stills</a><a href="#h-bts">BTS</a><a href="#h-statement">Statement</a><a href="#h-team">Creatives</a><a href="#h-credits">Credits</a><a href="#h-contact">Contact</a>
-    </nav>
   </header>
 
   <section aria-labelledby="h-logline">
