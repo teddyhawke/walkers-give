@@ -156,6 +156,10 @@ p { margin: 0 0 14px; max-width: 64ch; }
 
 .poster-ph { aspect-ratio: 2 / 3; max-width: 260px; border: 1px dashed var(--rule); border-radius: 4px; display: grid; place-items: center; text-align: center; padding: 20px; box-sizing: border-box; color: var(--dust); font-size: 14px; }
 
+.poster { display: block; max-width: 300px; }
+.poster img { width: 100%; display: block; border-radius: 4px; border: 1px solid var(--rule); }
+.poster-note { color: var(--dust); font-size: 13px; margin-top: 10px; }
+
 .todo { background: rgba(244,166,58,.14); color: var(--sodium); padding: 0 4px; border-radius: 3px; font-style: normal; }
 
 footer { margin-top: 64px; padding-top: 18px; border-top: 1px solid var(--rule); display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; color: #6c7286; font-size: 11px; }
@@ -344,7 +348,8 @@ footer a { color: var(--sand); text-decoration: none; }
 
   <section aria-labelledby="h-poster">
     <h2 id="h-poster">Poster</h2>
-    <div class="poster-ph">Official poster<br>coming Dec 2026</div>
+    <a class="poster" href="poster/walkers-poster-placeholder.jpg" target="_blank" rel="noopener"><img src="poster/walkers-poster-placeholder.jpg" alt="WALKERS key art: a lone car under a gas station canopy at night" loading="lazy"></a>
+    <p class="poster-note">Placeholder key art. Official poster coming Dec 2026.</p>
   </section>
 
   <section aria-labelledby="h-contact">
