@@ -76,6 +76,7 @@ h1 {
 .title-stage { position: relative; }
 .title-stage h1 { position: relative; z-index: 1; }
 .walker.back { z-index: 0; }
+.jtree { position: absolute; left: 0; top: -28px; width: 100%; height: calc(100% + 28px); pointer-events: none; z-index: 1; }
 .walker { position: absolute; left: 0; right: 0; top: -28px; bottom: 0; width: 100%; height: calc(100% + 28px); display: block; pointer-events: none; z-index: 2; }
 @media (prefers-reduced-motion: reduce) { .walker { display: none; } }
 .tags { display: flex; flex-wrap: nowrap; gap: 10px; margin: 14px 0 0; padding: 0; list-style: none; white-space: nowrap; }
@@ -205,7 +206,7 @@ footer a { color: var(--sand); text-decoration: none; }
   @page { size: Letter; margin: 0.5in 0; background: #0b0f1a; }
   html, body { background: var(--night) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   .wrap { max-width: none; padding: 0 0.6in; }
-  .top, .walker, .actions, .dl-label, .todo, .screen-only, details.more > summary { display: none !important; }
+  .top, .walker, .jtree, .actions, .dl-label, .todo, .screen-only, details.more > summary { display: none !important; }
   .print-only { display: block; }
   .print-only-i { display: inline; }
   .print-only a { color: var(--sodium); }
@@ -241,6 +242,7 @@ footer a { color: var(--sand); text-decoration: none; }
     <p class="eyebrow">Prism Entertainment &middot; Press kit</p>
     <div class="title-stage">
     <canvas class="walker back" id="walker-back" aria-hidden="true"></canvas>
+    <canvas class="jtree" id="jtree" aria-hidden="true"></canvas>
     <h1 id="title">Walkers</h1>
     <div class="mirror-wrap" id="mirror-band" aria-hidden="true">
       <div class="mirror">Walkers</div>
@@ -450,10 +452,53 @@ footer a { color: var(--sand); text-decoration: none; }
 </main>
 <script>
 (function () {
+  var cv = document.getElementById('jtree'); if (!cv || !cv.getContext) return;
+  var seed = 7; function R() { seed = (seed * 16807) % 2147483647; return seed / 2147483647; }
+  function paint() {
+    var dpr = Math.min(window.devicePixelRatio || 1, 2), W = cv.clientWidth, H = cv.clientHeight;
+    cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+    var c = cv.getContext('2d'); c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, W, H);
+    var title = document.getElementById('title'), rg = document.createRange(); rg.selectNodeContents(title);
+    var tr = rg.getBoundingClientRect(), cr = cv.getBoundingClientRect();
+    var base = tr.bottom - cr.top - (tr.bottom - tr.top) * 0.08;
+    var h = Math.min((tr.bottom - tr.top) * 0.95, (base - 6) / 1.02);   // keep the crown inside the canvas
+    var x = tr.right - cr.left + h * 0.42;
+    if (x + h * 0.36 > W) return;                       // no room on narrow screens: leave it out
+    c.lineCap = 'round'; c.lineJoin = 'round';
+    function tuft(x, y, r, pad) {
+      for (var k = 0; k < 44; k++) { var u = R(), a = -Math.PI / 2 + (u - 0.5) * Math.PI * 1.9, l = r * (0.45 + R() * 0.6) * (1 - Math.abs(u - 0.5) * 0.6);
+        c.lineWidth = Math.max(1, r * 0.05) + pad; c.beginPath(); c.moveTo(x, y); c.lineTo(x + Math.cos(a) * l, y + Math.sin(a) * l * 0.95); c.stroke(); }
+      for (var k = 0; k < 10; k++) { var a = Math.PI / 2 + (R() - 0.5) * 1.6, l = r * (0.4 + R() * 0.4);
+        c.lineWidth = Math.max(1, r * 0.05) + pad; c.beginPath(); c.moveTo(x, y + r * 0.15); c.lineTo(x + Math.cos(a) * l, y + r * 0.15 + Math.sin(a) * l); c.stroke(); }
+    }
+    function tree(pad) {
+      seed = 31; var w = h * 0.075;
+      function br(px, py, ang, len, wid, d) {
+        var ex = px + Math.cos(ang) * len, ey = py + Math.sin(ang) * len;
+        var cx = px + Math.cos(ang) * len * 0.5 + (ang < -Math.PI / 2 ? -1 : 1) * len * 0.15, cy = py + Math.sin(ang) * len * 0.5 + len * 0.12;
+        c.lineWidth = wid + pad * 2; c.beginPath(); c.moveTo(px, py); c.quadraticCurveTo(cx, cy, ex, ey); c.stroke();
+        if (d <= 0 || R() < 0.15) { tuft(ex, ey, h * 0.085, pad); return; }
+        var n = R() < 0.6 ? 2 : 3;
+        for (var i = 0; i < n; i++) br(ex, ey, -Math.PI / 2 + (i - (n - 1) / 2) * (0.7 + R() * 0.5) + (R() - 0.5) * 0.3, len * (0.58 + R() * 0.22), wid * 0.78, d - 1);
+      }
+      var tx = x - h * 0.02, ty = base - h * 0.42;
+      c.lineWidth = w + pad * 2; c.beginPath(); c.moveTo(x, base); c.quadraticCurveTo(x + h * 0.03, base - h * 0.2, tx, ty); c.stroke();
+      [-0.75, 0.05, 0.8].forEach(function (o) { br(tx, ty, -Math.PI / 2 + o + (R() - 0.5) * 0.2, h * 0.2, w * 0.75, 2); });
+    }
+    c.save(); c.translate(1.4, -1.1); c.strokeStyle = 'rgba(170,195,240,0.32)'; tree(0.7); c.restore();   // moonlit edge
+    c.strokeStyle = '#121828'; tree(0);
+  }
+  paint(); window.addEventListener('resize', paint);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(paint);
+})();
+</script>
+<script>
+(function () {
   var front = document.getElementById('walker'), back = document.getElementById('walker-back');
   if (!front || !front.getContext || !back) return;
   if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   var cF = front.getContext('2d'), cB = back.getContext('2d'), W = 0, H = 0, dpr = 1, M = {};
+  var off = document.createElement('canvas'), oc = off.getContext('2d'), img = null;
   function size() {
     dpr = Math.min(window.devicePixelRatio || 1, 2);
     W = front.clientWidth; H = front.clientHeight;
@@ -465,9 +510,8 @@ footer a { color: var(--sand); text-decoration: none; }
     var tr = rg.getBoundingClientRect();
     var fs = parseFloat(getComputedStyle(title).fontSize) || 80;
     M.S = fs * 0.86;
-    M.gA = band.top - cr.top + band.height * 0.55;               // just under the word
-    M.gB = tr.bottom - cr.top - Math.max(2, tr.height * 0.06);    // the title's baseline
-    M.tx = Math.min(tr.right - cr.left + M.S * 0.42, W - M.S * 0.32);
+    M.gA = band.top - cr.top + band.height * 0.55;               // the road, just under the word
+    M.lift = (tr.bottom - tr.top) * 0.45;                         // how high it rides behind the letters
   }
   size(); window.addEventListener('resize', size);
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(size);
@@ -492,240 +536,278 @@ footer a { color: var(--sand); text-decoration: none; }
   }
 
   // ---- three bodies on one skeleton (units: figure height, y up, facing right) ----
+
+  // on all fours it moves like a spider: back arched high on long folded legs, head hanging underneath
   function animal(ph, go, look, t) {
-    var bob = Math.sin(ph * 2) * 0.018 * go;
-    var twitch = (1 - go) * (Math.sin(t * 23) * 0.012 + look * 0.09);   // head jerks up to look when it freezes
-    var hip = P(-0.30, 0.37 + bob), mid = P(-0.05, 0.45 + bob * 0.5), chest = P(0.19, 0.33 + bob), head = P(0.41, 0.21 + bob * 1.6 + twitch);
-    var st = 0.085 * go, li = 0.09;
-    var fFR = stepFoot(0.33, ph, st, li), fFL = stepFoot(0.29, ph + Math.PI, st, li);
-    var fBR = stepFoot(-0.20, ph + Math.PI, st, li), fBL = stepFoot(-0.25, ph, st, li);
-    return { hip: hip, mid: mid, chest: chest, head: head, hr: 0.05, torso: 0.075, limb: 0.03,
-      arms: [[chest, ik(chest, fFR, 0.27, 0.27, 1), fFR], [chest, ik(chest, fFL, 0.27, 0.27, 1), fFL]],
-      legs: [[hip, ik(hip, fBR, 0.26, 0.26, -1), fBR], [hip, ik(hip, fBL, 0.26, 0.26, -1), fBL]] };
+    var bob = Math.sin(ph * 2) * 0.02 * go;
+    var twitch = (1 - go) * (Math.sin(t * 19) * 0.01 + look * 0.05);
+    var tilt = (1 - go) * look * Math.sin(t * 3.1) * 0.06;                // slow, wrong head tilt while it freezes
+    var hip = P(-0.26, 0.60 + bob), mid = P(-0.04, 0.70 + bob), chest = P(0.17, 0.60 + bob);
+    var head = P(0.30 + tilt, 0.36 + bob + twitch);
+    var st = 0.12 * go, li = 0.10;
+    var fFR = stepFoot(0.46, ph, st, li), fFL = stepFoot(0.38, ph + Math.PI, st, li);
+    var fBR = stepFoot(-0.40, ph + Math.PI, st, li), fBL = stepFoot(-0.50, ph, st, li);
+    return { hip: hip, mid: mid, chest: chest, head: head, neck: P(0.24, 0.55 + bob), hr: 0.042, torso: 0.075, limb: 0.018, eyeDy: 0.35, hang: 1,
+      arms: [[chest, ik(chest, fFR, 0.40, 0.42, 1), fFR], [chest, ik(chest, fFL, 0.38, 0.40, 1), fFL]],
+      legs: [[hip, ik(hip, fBR, 0.38, 0.40, -1), fBR], [hip, ik(hip, fBL, 0.40, 0.42, -1), fBL]] };
   }
+  // upright it's too tall and too thin, hunched, arms hanging past the knees
   function human(ph, go) {
-    var bob = (1 - Math.abs(Math.cos(ph))) * 0.02 * go;                // rises over the planted leg
-    var lean = 0.03 * go;
-    var hip = P(0, 0.47 + bob), mid = P(0.01 + lean * 0.5, 0.63 + bob), chest = P(0.02 + lean, 0.79 + bob), head = P(0.04 + lean, 0.92 + bob);
+    var bob = (1 - Math.abs(Math.cos(ph))) * 0.02 * go;
+    var hip = P(0, 0.50 + bob), mid = P(0.02, 0.68 + bob), chest = P(0.05, 0.86 + bob), head = P(0.12, 0.92 + bob);
     var st = 0.11 * go, li = 0.07;
     var fR = stepFoot(0.02, ph, st, li), fL = stepFoot(0.02, ph + Math.PI, st, li);
-    var swing = Math.cos(ph) * 0.09 * go;                                // arms swing opposite their legs
-    var hR = P(0.04 + swing, 0.45), hL = P(0.04 - swing, 0.45);
-    return { hip: hip, mid: mid, chest: chest, head: head, hr: 0.055, torso: 0.07, limb: 0.03,
-      arms: [[chest, ik(chest, hR, 0.19, 0.19, -1), hR], [chest, ik(chest, hL, 0.19, 0.19, -1), hL]],
-      legs: [[hip, ik(hip, fR, 0.25, 0.24, 1), fR], [hip, ik(hip, fL, 0.25, 0.24, 1), fL]] };
+    var swing = Math.cos(ph) * 0.05 * go;                                // barely swings: arms just hang
+    var hR = P(0.10 + swing, 0.30), hL = P(0.06 - swing, 0.32);
+    return { hip: hip, mid: mid, chest: chest, head: head, neck: P(0.09, 0.90 + bob), hr: 0.04, torso: 0.06, limb: 0.018, eyeDy: -0.1, hang: 0,
+      arms: [[chest, ik(chest, hR, 0.29, 0.29, -1), hR], [chest, ik(chest, hL, 0.29, 0.29, -1), hL]],
+      legs: [[hip, ik(hip, fR, 0.26, 0.26, 1), fR], [hip, ik(hip, fL, 0.26, 0.26, 1), fL]] };
   }
+
   function tree(t) {
     var sway = Math.sin(t * 1.3) * 0.015;
     var hip = P(0, 0.34), mid = P(-0.01, 0.53), chest = P(0.01 + sway * 0.5, 0.72), head = P(0.05 + sway, 0.84);
-    return { hip: hip, mid: mid, chest: chest, head: head, hr: 0.03, torso: 0.11, limb: 0.045,
+    return { hip: hip, mid: mid, chest: chest, head: head, neck: mid, hr: 0.03, torso: 0.11, limb: 0.045, eyeDy: 0, hang: 0,
       arms: [[chest, P(0.18 + sway, 0.84), P(0.22 + sway, 1.0)], [P(0.0, 0.6), P(-0.18 + sway, 0.70), P(-0.22 + sway, 0.9)]],
       legs: [[hip, P(-0.01, 0.16), P(-0.03, 0.0)], [hip, P(0.01, 0.16), P(0.03, 0.0)]] };
   }
+
   function blend(a, b, t) {
     var m = function (pa, pb) { return mix(pa, pb, t); };
     var chain = function (ca, cb) { return [m(ca[0], cb[0]), m(ca[1], cb[1]), m(ca[2], cb[2])]; };
     return { hip: m(a.hip, b.hip), mid: m(a.mid, b.mid), chest: m(a.chest, b.chest), head: m(a.head, b.head),
+      neck: m(a.neck, b.neck), eyeDy: lerp(a.eyeDy, b.eyeDy, t), hang: lerp(a.hang, b.hang, t),
       hr: lerp(a.hr, b.hr, t), torso: lerp(a.torso, b.torso, t), limb: lerp(a.limb, b.limb, t),
       arms: [chain(a.arms[0], b.arms[0]), chain(a.arms[1], b.arms[1])],
       legs: [chain(a.legs[0], b.legs[0]), chain(a.legs[1], b.legs[1])] };
   }
 
-  // darting motion: quick bursts with freezes in between. legs = [[endFraction, startU, endU], ...]
-  function darts(u, plan) {
-    for (var i = 0; i < plan.length; i++) {
-      var p = plan[i];
-      if (u < p[1]) return { f: i ? plan[i - 1][0] : 0, go: 0 };
-      if (u < p[2]) { var k = (u - p[1]) / (p[2] - p[1]);
-        var e = 1 - Math.pow(1 - k, 2.2);                                  // fast start, soft landing
-        return { f: lerp(i ? plan[i - 1][0] : 0, p[0], e), go: 1 }; }
-    }
-    return { f: plan[plan.length - 1][0], go: 0 };
+
+  function carAt(t) {
+    var a = -0.2 * W, b = 0.36 * W, c = 1.25 * W, x;
+    if (t < 0.3) x = a;
+    else if (t < 5.2) { var u = (t - 0.3) / 4.9;
+      x = lerp(a, b, u < 0.75 ? u / 0.75 * 0.85 : 0.85 + 0.15 * (1 - Math.pow(1 - (u - 0.75) / 0.25, 2))); }
+    else if (t < 6.4) x = b;
+    else if (t < 12.6) { var v = (t - 6.4) / 6.2; x = lerp(b, c, 0.45 * v + 0.55 * v * v); }
+    else x = c;
+    var brake = (t > 4.6 && t < 6.5) || (t > 8.5 && t < 8.85);
+    return { x: x, brake: brake };
   }
 
-  // ---- the scene ----
-  // 0-5.5   scurries in BEHIND the letters in bursts, freezing to look around (eyes peek through the gaps)
-  // 5.5-9   becomes a Joshua tree behind the word, branches poking over the top
-  // 9-10.5  rises as a person and steps out in front
-  // 10.5-13 walks across the front of the word
-  // 13-15.6 drops to all fours and scrambles up beside the word
-  // 15.6-22 settles there as a Joshua tree, one slow glint
-  // 22-24   drops and bolts off the edge
-  var T = 28;
-  function stateAt(t) {
-    var gA = M.gA, gB = M.gB, tx = M.tx, S = M.S;
-    var x1 = 0.30 * W, x2 = 0.60 * W;
-    if (t < 5.5) {
-      var d = darts(t / 5.5, [[0.35, 0.00, 0.16], [0.55, 0.28, 0.38], [0.80, 0.52, 0.62], [1.00, 0.80, 0.90]]);
-      var look = (!d.go && t > 1.2) ? 1 : 0;
-      return { x: lerp(-0.35 * W, x1, d.f), gy: gA, form: 'A', go: d.go, look: look,
-               eyes: (t > 2.3 && t < 3.0) ? Math.sin(Math.PI * (t - 2.3) / 0.7) : 0, layer: 'back' };
-    }
-    if (t < 7)    return { x: x1, gy: gA, form: 'AT', k: ss((t - 5.5) / 1.5), go: 0, eyes: 0, layer: 'back' };
-    if (t < 9)    return { x: x1, gy: gA, form: 'T', go: 0, eyes: 0, layer: 'back' };
-    if (t < 10.5) return { x: x1, gy: gA, form: 'TH', k: ss((t - 9) / 1.5), go: 0, eyes: 0, layer: t < 10 ? 'back' : 'front' };
-    if (t < 13)   return { x: lerp(x1, x2, (t - 10.5) / 2.5), gy: gA, form: 'H', go: 1, eyes: t > 12.2 ? ss((t - 12.2) / 0.3) : 0, layer: 'front' };
-    if (t < 13.8) return { x: x2, gy: gA, form: 'HA', k: ss((t - 13) / 0.8), go: 0, eyes: 1 - ss((t - 13) / 0.4), layer: 'front' };
-    if (t < 15.6) { var dd = darts((t - 13.8) / 1.8, [[0.45, 0.0, 0.3], [1.0, 0.5, 0.85]]);
-                    return { x: lerp(x2, tx, dd.f), gy: lerp(gA, gB, dd.f) - Math.sin(Math.PI * dd.f) * S * 0.3,
-                             form: 'A', go: dd.go, look: dd.go ? 0 : 1, eyes: 0, layer: 'front' }; }
-    if (t < 17)   return { x: tx, gy: gB, form: 'AT', k: ss((t - 15.6) / 1.4), go: 0, eyes: 0, layer: 'front' };
-    if (t < 21.5) return { x: tx, gy: gB, form: 'T', go: 0, eyes: (t > 19.4 && t < 20.4) ? Math.sin(Math.PI * (t - 19.4)) : 0, layer: 'front' };
-    if (t < 22.3) return { x: tx, gy: gB, form: 'TA', k: ss((t - 21.5) / 0.8), go: 0, eyes: 0, layer: 'front' };
-    if (t < 23.6) { var u = (t - 22.3) / 1.3; return { x: lerp(tx, W + S, 1 - Math.pow(1 - u, 1.6)), gy: gB, form: 'A', go: 1, eyes: 0, layer: 'front' }; }
-    return null;
+  // a small boxy wagon in silhouette, phone glow inside, headlights and taillights
+  function drawCar(c, car, S) {
+    var L = S * 0.8, Hc = S * 0.28, x = car.x, gy = M.gA, wr = S * 0.072;
+    if (x < -L * 3 || x > W + L * 3) return;
+    var U = function (u) { return x + u * L; }, V = function (v) { return gy - v * Hc; };
+    c.save();
+    // headlight beam on the road ahead, and spill on the letters
+    c.globalCompositeOperation = 'screen';
+    var hx = U(0.5), hy = V(0.45);
+    var g = c.createLinearGradient(hx, 0, hx + L * 2.2, 0);
+    g.addColorStop(0, 'rgba(255,236,196,0.32)'); g.addColorStop(1, 'rgba(255,236,196,0)');
+    c.fillStyle = g; c.beginPath(); c.moveTo(hx, hy - Hc * 0.08); c.lineTo(hx + L * 2.2, hy - Hc * 0.8); c.lineTo(hx + L * 2.2, gy + Hc * 0.25); c.lineTo(hx, hy + Hc * 0.1); c.closePath(); c.fill();
+    // taillight glow (bigger and hotter on the brakes)
+    var tr = L * (car.brake ? 0.75 : 0.35), tx = U(-0.5), ty = V(0.5);
+    var rg = c.createRadialGradient(tx, ty, 0, tx, ty, tr);
+    rg.addColorStop(0, car.brake ? 'rgba(255,40,30,0.45)' : 'rgba(255,40,30,0.22)'); rg.addColorStop(1, 'rgba(255,40,30,0)');
+    c.fillStyle = rg; c.fillRect(tx - tr, ty - tr, tr * 2, tr * 2);
+    c.restore();
+    // body
+    c.save();
+    c.beginPath();
+    c.moveTo(U(-0.5), V(0.2)); c.lineTo(U(-0.5), V(0.62)); c.quadraticCurveTo(U(-0.49), V(0.95), U(-0.40), V(1.0));
+    c.lineTo(U(0.12), V(1.0)); c.lineTo(U(0.30), V(0.64)); c.lineTo(U(0.47), V(0.58)); c.quadraticCurveTo(U(0.51), V(0.5), U(0.5), V(0.2));
+    c.closePath();
+    c.fillStyle = '#05070c'; c.strokeStyle = 'rgba(170,195,240,0.35)'; c.lineWidth = 1; c.fill(); c.stroke();
+    // windows, with one phone screen glowing in the back seat
+    c.fillStyle = 'rgba(60,80,120,0.35)';
+    c.beginPath(); c.moveTo(U(-0.42), V(0.66)); c.lineTo(U(-0.40), V(0.92)); c.lineTo(U(0.09), V(0.92)); c.lineTo(U(0.23), V(0.66)); c.closePath(); c.fill();
+    c.fillStyle = 'rgba(150,190,255,0.85)'; c.shadowColor = 'rgba(150,190,255,0.9)'; c.shadowBlur = Math.max(4, S * 0.05);
+    c.fillRect(U(-0.2), V(0.78), Math.max(1.5, L * 0.03), Math.max(2, Hc * 0.1));
+    c.shadowBlur = 0;
+    // lamps
+    c.fillStyle = car.brake ? '#ff3a2a' : '#c2261c'; c.fillRect(U(-0.505), V(0.6), Math.max(1.5, L * 0.025), Hc * 0.14);
+    c.fillStyle = '#fff1d0'; c.fillRect(U(0.48), V(0.5), Math.max(1.5, L * 0.02), Hc * 0.1);
+    // wheels
+    c.fillStyle = '#05070c'; c.strokeStyle = 'rgba(170,195,240,0.3)';
+    [-0.3, 0.3].forEach(function (u) { c.beginPath(); c.arc(U(u), gy - wr, wr, 0, 7); c.fill(); c.stroke(); });
+    c.restore();
   }
 
-  var ph = 0, lastX = null, t0 = performance.now();
+
+  // ---- more bodies for it to pass through (same skeleton, so any one can flow into any other) ----
+  function crawler(ph, go) {               // low, long, dog-like
+    var bob = Math.sin(ph * 2) * 0.012 * go;
+    var hip = P(-0.30, 0.26 + bob), mid = P(-0.05, 0.29 + bob), chest = P(0.20, 0.27 + bob), neck = P(0.31, 0.28 + bob), head = P(0.43, 0.25 + bob);
+    var st = 0.09 * go, li = 0.06;
+    var a = stepFoot(0.26, ph, st, li), b = stepFoot(0.18, ph + Math.PI, st, li), c = stepFoot(-0.24, ph + Math.PI, st, li), d = stepFoot(-0.32, ph, st, li);
+    return { hip: hip, mid: mid, chest: chest, head: head, neck: neck, hr: 0.05, torso: 0.07, limb: 0.024, eyeDy: -0.1, hang: 0,
+      arms: [[chest, ik(chest, a, 0.15, 0.15, 1), a], [chest, ik(chest, b, 0.15, 0.15, 1), b]],
+      legs: [[hip, ik(hip, c, 0.15, 0.15, -1), c], [hip, ik(hip, d, 0.15, 0.15, -1), d]] };
+  }
+  function hunch(t) {                      // crouched, knuckles on the ground, like a trail-cam still
+    var br = Math.sin(t * 2.2) * 0.01;
+    var hip = P(-0.02, 0.30), mid = P(0.04, 0.45 + br), chest = P(0.12, 0.55 + br), neck = P(0.18, 0.58 + br), head = P(0.24, 0.55 + br);
+    return { hip: hip, mid: mid, chest: chest, head: head, neck: neck, hr: 0.065, torso: 0.1, limb: 0.03, eyeDy: -0.05, hang: 0,
+      arms: [[chest, P(0.26, 0.30), P(0.30, 0.0)], [chest, P(0.18, 0.28), P(0.18, 0.0)]],
+      legs: [[hip, P(0.14, 0.22), P(0.02, 0.0)], [hip, P(0.06, 0.20), P(-0.10, 0.0)]] };
+  }
+  function puddle(t) {                     // formless: a slick of something on the road
+    var q = Math.sin(t * 3) * 0.02;
+    var hip = P(-0.18, 0.08), mid = P(0.0, 0.12 + q), chest = P(0.16, 0.09), neck = P(0.22, 0.1), head = P(0.26, 0.12 - q);
+    return { hip: hip, mid: mid, chest: chest, head: head, neck: neck, hr: 0.07, torso: 0.13, limb: 0.06, eyeDy: 0, hang: 0,
+      arms: [[chest, P(0.28, 0.06), P(0.36, 0.02)], [chest, P(0.2, 0.04), P(0.26, 0.01)]],
+      legs: [[hip, P(-0.26, 0.05), P(-0.34, 0.02)], [hip, P(-0.16, 0.03), P(-0.22, 0.01)]] };
+  }
+
+  // ---- it never holds one shape for long ----
+  var FORMS = ['spider', 'crawler', 'human', 'tree', 'hunch', 'puddle'];
+  var ORDER = [0, 4, 1, 3, 5, 2, 0, 1, 4, 3, 2, 5, 1, 0, 3, 4];
+  function poseOf(name, ph, go, t) {
+    switch (name) {
+      case 'spider': return animal(ph, go, 0.5, t);
+      case 'crawler': return crawler(ph, go);
+      case 'human': return human(ph, go);
+      case 'tree': return tree(t);
+      case 'hunch': return hunch(t);
+      default: return puddle(t);
+    }
+  }
+  function formAt(t, ph, go, force) {
+    if (force) return poseOf(force, ph, go, t);
+    var seg = 1.25, i = Math.floor(t / seg), f = (t - i * seg) / seg;
+    var a = FORMS[ORDER[i % ORDER.length]], b = FORMS[ORDER[(i + 1) % ORDER.length]];
+    return blend(poseOf(a, ph, go, t), poseOf(b, ph, go, t), ss((f - 0.35) / 0.65));   // always partway into the next thing
+  }
+
+  // ---- where it is: it slides, or it blinks out and turns up somewhere else ----
+  // rel = offset from the car (in figure heights); abs = fraction of width; y: 0 road, 1 behind the letters
+  var WP = [
+    { t: 0.9,  rel: -1.5, y: 0, how: 'blink' },
+    { t: 2.6,  rel: -1.0, y: 0, how: 'slide' },
+    { t: 3.4,  rel: 0.6,  y: 1, how: 'blink', eyes: 1 },
+    { t: 4.5,  rel: -0.2, y: 1, how: 'slide' },
+    { t: 5.2,  rel: -0.75, y: 0, how: 'blink', eyes: 1, force: 'hunch' },
+    { t: 6.3,  rel: -1.7, y: 0, how: 'slide' },
+    { t: 7.1,  rel: 1.9,  y: 0, how: 'blink', force: 'human' },
+    { t: 8.0,  abs: 0.3,  y: 1, how: 'blink' },
+    { t: 9.2,  abs: 0.46, y: 1, how: 'slide', eyes: 1 },
+    { t: 9.9,  rel: -0.8, y: 0, how: 'blink' },
+    { t: 11.4, rel: -1.6, y: 0, how: 'slide' },
+    { t: 12.4, abs: 0.8,  y: 0, how: 'blink', force: 'human', eyes: 1 },
+    { t: 13.9, abs: 0.8,  y: 0, how: 'slide', force: 'human', eyes: 1 },
+    { t: 14.4, abs: 0.8,  y: 0, how: 'blink', gone: 1 }
+  ];
+  var T = 16;
+  function wx(p, t) { return p.abs !== undefined ? p.abs * W : carAt(t).x + p.rel * M.S; }
+  function wy(p) { return M.gA - p.y * M.lift; }
+  function where(t) {
+    if (t < WP[0].t - 0.2 || t > WP[WP.length - 1].t + 0.25) return null;
+    var i = 0; while (i < WP.length - 1 && t >= WP[i + 1].t) i++;
+    var a = WP[i], b = WP[Math.min(i + 1, WP.length - 1)];
+    var u = b === a ? 0 : (t - a.t) / (b.t - a.t);
+    var o = 1, p = a, x, y;
+    if (b.how === 'slide' && b !== a) {
+      var e = ss(u); x = lerp(wx(a, t), wx(b, t), e); y = lerp(wy(a), wy(b), e);
+    } else {
+      // blink: hold, then in the last 0.5s fade out and come back somewhere else
+      var bt = Math.max(0, (t - (b.t - 0.5)) / 0.5);
+      if (b !== a && bt > 0) { o = Math.abs(1 - 2 * bt); p = bt < 0.5 ? a : b; } else p = a;
+      x = wx(p, t); y = wy(p);
+    }
+    if (t < WP[0].t) { o = Math.max(0, (t - (WP[0].t - 0.2)) / 0.2); }
+    if (a.gone && t >= a.t) return null;
+    var lastBlink = WP[WP.length - 1]; if (t > lastBlink.t - 0.5) o *= Math.max(0, 1 - (t - (lastBlink.t - 0.5)) / 0.5);
+    return { x: x, y: y, o: o, back: (p.y || 0) > 0.5, eyes: p.eyes ? 1 : 0, force: p.force };
+  }
+
+  // ---- metaball body: every bone is a soft capsule, summed into one field ----
+  var hsh = function (i) { var v = Math.sin(i * 127.1 + 311.7) * 43758.5453; return v - Math.floor(v); };
+  function caps(pose) {
+    var c = [], L = function (a, b, r) { c.push([a.x, a.y, b.x, b.y, r]); };
+    var lr = Math.max(0.028, pose.limb * 1.1), tr = pose.torso * 0.85;
+    L(pose.hip, pose.mid, tr); L(pose.mid, pose.chest, tr * 0.95);
+    L(pose.chest, pose.neck || pose.head, lr * 1.1); L(pose.neck || pose.head, pose.head, lr);
+    L(pose.head, pose.head, pose.hr * 1.15);
+    [pose.arms[0], pose.arms[1], pose.legs[0], pose.legs[1]].forEach(function (ch) { L(ch[0], ch[1], lr); L(ch[1], ch[2], lr * 0.85); });
+    return c;
+  }
+  // colours it drifts through at the edges: dried blood, bruise, sodium, cold blue
+  var PAL = [[150, 22, 30], [92, 44, 150], [205, 118, 34], [46, 104, 150]];
+  function edgeCol(t) { var f = (t * 0.22) % PAL.length, i = Math.floor(f), k = ss(f - i), a = PAL[i], b = PAL[(i + 1) % PAL.length];
+    return [lerp(a[0], b[0], k), lerp(a[1], b[1], k), lerp(a[2], b[2], k)]; }
+
+  function render(ctx, pose, x, gy, S, flip, opacity, t, eyes) {
+    var C = caps(pose), cell = Math.max(1.6, S / 70);
+    var minx = 1e9, maxx = -1e9, miny = 1e9, maxy = -1e9;
+    C.forEach(function (c) { var r = c[4] * 2.2;
+      minx = Math.min(minx, c[0] - r, c[2] - r); maxx = Math.max(maxx, c[0] + r, c[2] + r);
+      miny = Math.min(miny, c[1] - r, c[3] - r); maxy = Math.max(maxy, c[1] + r, c[3] + r); });
+    var WX = 1.25, gw = Math.ceil((maxx - minx) * S * WX / cell) + 2, gh = Math.ceil((maxy - miny) * S / cell) + 2;
+    if (gw < 2 || gh < 2 || gw * gh > 60000) return;
+    if (off.width !== gw || off.height !== gh) { off.width = gw; off.height = gh; img = oc.createImageData(gw, gh); }
+    var d = img.data, ec = edgeCol(t), n = C.length;
+    for (var j = 0; j < gh; j++) {
+      var v = maxy - (j * cell) / S;
+      for (var i = 0; i < gw; i++) {
+        var u = minx + (i * cell) / (S * WX);
+        // the body ripples like something under the skin
+        var wu = u + 0.022 * Math.sin(v * 17 + t * 3.1) + 0.012 * Math.sin(v * 41 - t * 5.3);
+        var wv = v + 0.02 * Math.sin(u * 15 - t * 2.7) + 0.01 * Math.sin(u * 37 + t * 4.4);
+        var f = 0;
+        for (var k = 0; k < n; k++) {
+          var c = C[k], ax = c[0], ay = c[1], bx = c[2] - ax, by = c[3] - ay, px = wu - ax, py = wv - ay;
+          var bb = bx * bx + by * by, h = bb > 0 ? Math.max(0, Math.min(1, (px * bx + py * by) / bb)) : 0;
+          var dx = px - bx * h, dy = py - by * h, r = c[4];
+          f += (r * r) / (dx * dx + dy * dy + 1e-5);
+        }
+        var o = (j * gw + i) * 4;
+        if (f < 0.5) { d[o + 3] = 0; continue; }
+        var a = Math.min(1, (f - 0.5) / 0.7);                 // soft, smoky edge
+        var core = Math.min(1, Math.max(0, (f - 1.1) / 1.6)); // dark, dense middle
+        var fl = 0.85 + 0.15 * Math.sin(u * 23 + v * 19 + t * 6);
+        d[o] = lerp(ec[0] * fl, 4, core); d[o + 1] = lerp(ec[1] * fl, 6, core); d[o + 2] = lerp(ec[2] * fl, 11, core);
+        d[o + 3] = 255 * a * (0.55 + 0.45 * core);
+      }
+    }
+    oc.putImageData(img, 0, 0);
+    ctx.save();
+    ctx.globalAlpha = opacity;
+    ctx.imageSmoothingEnabled = true;
+    var left = x + minx * S * WX, top = gy - maxy * S;
+    if (flip) { ctx.translate(2 * x, 0); ctx.scale(-1, 1); }
+    var gc = edgeCol(t + 1.5);
+    ctx.shadowColor = 'rgba(' + (gc[0] | 0) + ',' + (gc[1] | 0) + ',' + (gc[2] | 0) + ',0.55)'; ctx.shadowBlur = Math.max(6, S * 0.1);
+    ctx.drawImage(off, left, top, gw * cell, gh * cell);
+    ctx.shadowBlur = 0;
+    if (eyes > 0.01) {
+      var hr = pose.hr * S, ex = x + pose.head.x * S * WX + hr * 0.2, ey = gy - pose.head.y * S - hr * 0.1, r = Math.max(1.1, 0.011 * S);
+      ctx.globalAlpha = eyes * Math.min(1, opacity * 1.4);
+      ctx.fillStyle = '#f1f5ff'; ctx.shadowColor = 'rgba(220,235,255,0.95)'; ctx.shadowBlur = Math.max(6, S * 0.06);
+      ctx.beginPath(); ctx.arc(ex, ey, r, 0, 7); ctx.arc(ex + hr * 0.75, ey + r * 0.2, r, 0, 7); ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  var ph = 0, lastX = null, face = 1, t0 = performance.now();
   function draw(now) {
     var t = ((now - t0) / 1000) % T;
     [cF, cB].forEach(function (c) { c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, W, H); });
-    var st = stateAt(t);
-    if (!st) { lastX = null; requestAnimationFrame(draw); return; }
-    var ctx = st.layer === 'back' ? cB : cF;
-    var S = M.S, x = st.x;
-    var strideNow = st.form === 'H' ? 0.11 : 0.085;
-    if (lastX !== null) ph += Math.abs(x - lastX) * Math.PI / (2 * strideNow * S * 1.25);  // feet planted, no skating
-    lastX = x;
-    var go = st.go || 0;
-    var A = animal(ph, go, st.look || 0, t), Hm = human(ph, go), Tr = tree(t);
-    var pose, treeW = 0, beast = 1;
-    switch (st.form) {
-      case 'A':  pose = A; break;
-      case 'H':  pose = Hm; beast = 0.4; break;
-      case 'T':  pose = Tr; treeW = 1; beast = 0; break;
-      case 'AT': pose = blend(A, Tr, st.k); treeW = st.k; beast = 1 - st.k; break;
-      case 'TH': pose = blend(Tr, Hm, st.k); treeW = 1 - st.k; beast = 0.4 * st.k; break;
-      case 'HA': pose = blend(Hm, A, st.k); beast = 0.4 + 0.6 * st.k; break;
-      case 'TA': pose = blend(Tr, A, st.k); treeW = 1 - st.k; beast = st.k; break;
-    }
-    var gy = st.gy, WX = 1.25, TH = 1.75;
-    var X = function (p) { return x + p.x * S * WX; }, Y = function (p) { return gy - p.y * S; };
-    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-    var hsh = function (i) { var v = Math.sin(i * 127.1 + 311.7) * 43758.5453; return v - Math.floor(v); };
-    var shiver = Math.sin(t * 31) * 0.5 + Math.sin(t * 47) * 0.5;          // fine tremor for the bristles
-    // walk a polyline in screen space, calling fn(x, y, tx, ty, i) every `step` px (tx,ty = unit tangent)
-    function along(pts, step, fn) {
-      var n = 0;
-      for (var i = 1; i < pts.length; i++) {
-        var ax = X(pts[i - 1]), ay = Y(pts[i - 1]), bx = X(pts[i]), by = Y(pts[i]);
-        var L = Math.hypot(bx - ax, by - ay) || 1, tx = (bx - ax) / L, ty = (by - ay) / L;
-        for (var d = step * 0.5; d < L; d += step) fn(ax + tx * d, ay + ty * d, tx, ty, n++ + i * 97);
-      }
-    }
-    function body(col, pad, glow) {
-      ctx.save();
-      ctx.strokeStyle = ctx.fillStyle = col;
-      if (glow) { ctx.shadowColor = glow; ctx.shadowBlur = Math.max(3, S * 0.05); }
-      function line(pts, w) {
-        ctx.lineWidth = w * S * TH + pad * 2; ctx.beginPath(); ctx.moveTo(X(pts[0]), Y(pts[0]));
-        for (var i = 1; i < pts.length; i++) ctx.lineTo(X(pts[i]), Y(pts[i]));
-        ctx.stroke();
-      }
-      // ragged fur/scale edge along a limb: short backward-raked barbs on both sides
-      function bristle(pts, w, seed) {
-        if (beast < 0.05) return;
-        var half = w * S * TH * 0.5;
-        ctx.save(); if (glow) { ctx.globalAlpha = 0.45; ctx.shadowBlur = 0; }   // only a faint catch-light on the hairs
-        ctx.lineWidth = Math.max(1, S * 0.008) + (glow ? 0.6 : 0);
-        along(pts, Math.max(4, S * 0.05), function (px, py, tx, ty, i) {
-          for (var side = -1; side <= 1; side += 2) {
-            var r = hsh(i * 2 + side + seed); if (r < 0.3) continue;
-            var len = S * (0.01 + 0.06 * Math.pow(r, 3)) * beast;
-            var nx = -ty * side, ny = tx * side;
-            var bx = px + nx * half * 0.8, by = py + ny * half * 0.8;
-            var rake = 0.3 + 0.9 * hsh(i + seed * 3) + 0.15 * shiver * r;
-            ctx.beginPath(); ctx.moveTo(bx - tx * 1.5, by - ty * 1.5);
-            ctx.lineTo(bx + (nx - tx * rake) * len, by + (ny - ty * rake) * len); ctx.stroke();
-          }
-        });
-        ctx.restore();
-      }
-      // knobbed joints and hooked claws
-      function knuckles(chain, w) {
-        if (beast < 0.05) return;
-        ctx.beginPath(); ctx.arc(X(chain[1]), Y(chain[1]), w * S * TH * 0.75 + pad, 0, 7); ctx.fill();
-        var fx = X(chain[2]), fy = Y(chain[2]);
-        ctx.lineWidth = Math.max(1, S * 0.01) + pad * 0.8;
-        for (var k = 0; k < 3; k++) {
-          var a0 = -0.5 + k * 0.45, len = S * 0.055 * beast;
-          ctx.beginPath(); ctx.moveTo(fx, fy);
-          ctx.quadraticCurveTo(fx + Math.cos(a0) * len * 0.7, fy - len * 0.25 + Math.sin(a0) * len * 0.3,
-                               fx + Math.cos(a0) * len, fy + len * 0.15 + Math.sin(a0) * len * 0.5);
-          ctx.stroke();
-        }
-      }
-      var spine = [pose.hip, pose.mid, pose.chest, pose.head];
-      line(pose.legs[1], pose.limb * 0.85); line(pose.arms[1], pose.limb * 0.85);
-      bristle(pose.legs[1], pose.limb * 0.85, 11); bristle(pose.arms[1], pose.limb * 0.85, 23);
-      knuckles(pose.legs[1], pose.limb * 0.85); knuckles(pose.arms[1], pose.limb * 0.85);
-      line([pose.hip, pose.mid, pose.chest], pose.torso);
-      line([pose.chest, pose.head], pose.limb * 1.2);
-      // belly fur hanging under the torso
-      bristle([pose.hip, pose.mid, pose.chest], pose.torso, 41);
-      // ridge of uneven spines down the back, raked toward the tail
-      if (beast > 0.05) {
-        var tw = pose.torso * S * TH * 0.5;
-        along(spine, Math.max(3, S * 0.032), function (px, py, tx, ty, i) {
-          var nx = ty, ny = -tx; if (ny > 0) { nx = -nx; ny = -ny; }        // the side facing up
-          var r = hsh(i + 7), len = S * (0.035 + 0.07 * r * r) * beast * (1 + 0.08 * shiver);
-          var bw = S * 0.013 + pad;
-          var bx = px + nx * tw * 0.8, by = py + ny * tw * 0.8;
-          ctx.beginPath();
-          ctx.moveTo(bx - tx * bw, by - ty * bw); ctx.lineTo(bx + tx * bw, by + ty * bw);
-          ctx.lineTo(bx + (nx - tx * 0.6) * len, by + (ny - ty * 0.6) * len); ctx.closePath(); ctx.fill();
-        });
-      }
-      // head: a long wedge skull with a hanging jaw, rounder when it's a person
-      var hx = X(pose.head), hy = Y(pose.head), cx0 = X(pose.chest), cy0 = Y(pose.chest);
-      var ang = Math.atan2(hy - cy0, hx - cx0), hr = pose.hr * S * 1.35;
-      ctx.save(); ctx.translate(hx, hy); ctx.rotate(ang * beast * 0.6);
-      ctx.beginPath(); ctx.ellipse(hr * 0.35 * beast, 0, hr * (1 + 0.7 * beast) + pad, hr * (1 - 0.25 * beast) + pad, 0, 0, 7); ctx.fill();
-      if (beast > 0.05) {
-        ctx.lineWidth = Math.max(1.5, S * 0.018) + pad;                     // slack jaw
-        ctx.beginPath(); ctx.moveTo(-hr * 0.2, hr * 0.5); ctx.lineTo(hr * 1.9 * beast, hr * (0.75 + 0.15 * shiver)); ctx.stroke();
-        ctx.lineWidth = Math.max(1, S * 0.009) + pad * 0.8;                 // crown of spikes
-        for (var k = 0; k < 5; k++) { var a = -2.3 - k * 0.22, l = hr * (0.6 + 0.5 * hsh(k + 3)) * beast;
-          ctx.beginPath(); ctx.moveTo(Math.cos(a) * hr * 0.8, Math.sin(a) * hr * 0.8); ctx.lineTo(Math.cos(a) * (hr * 0.8 + l), Math.sin(a) * (hr * 0.8 + l)); ctx.stroke(); }
-      }
-      ctx.restore();
-      line(pose.legs[0], pose.limb); line(pose.arms[0], pose.limb);
-      bristle(pose.legs[0], pose.limb, 57); bristle(pose.arms[0], pose.limb, 73);
-      knuckles(pose.legs[0], pose.limb); knuckles(pose.arms[0], pose.limb);
-      // scales: scattered moonlit flecks and broken crescents, never a grid
-      if (!glow && pad === 0 && beast > 0.05) {
-        ctx.lineWidth = 1; var tw2 = pose.torso * S * TH * 0.5;
-        along([pose.hip, pose.mid, pose.chest], Math.max(2, S * 0.018), function (px, py, tx, ty, i) {
-          var r1 = hsh(i * 3 + 1), r2 = hsh(i * 3 + 2), r3 = hsh(i * 3 + 5);
-          if (r3 < 0.35) return;
-          var o = (r1 * 2 - 1) * tw2 * 0.8, sx = px - ty * o, sy = py + tx * o, rr = S * (0.006 + 0.014 * r2);
-          ctx.strokeStyle = 'rgba(150,170,215,' + (0.06 + 0.16 * r3 * (o < 0 ? 1 : 0.5)) * beast + ')';   // lit from above
-          var a0 = Math.atan2(ty, tx) + Math.PI * (0.7 + 0.3 * r1);
-          ctx.beginPath(); ctx.arc(sx, sy, rr, a0, a0 + Math.PI * (0.4 + 0.5 * r2)); ctx.stroke();
-        });
-      }
-      if (treeW > 0.02) {
-        ctx.strokeStyle = ctx.fillStyle = col;
-        ctx.lineWidth = 0.022 * S + pad * 2;
-        [pose.arms[0][2], pose.arms[1][2], pose.head].forEach(function (tip, j) {
-          for (var k = 0; k < 11; k++) {
-            var ang = -Math.PI / 2 + (k - 5) * 0.28 + j * 0.2;
-            var len = (0.06 + (k % 3) * 0.02) * treeW;
-            ctx.beginPath(); ctx.moveTo(X(tip), Y(tip));
-            ctx.lineTo(X(tip) + Math.cos(ang) * len * S, Y(tip) + Math.sin(ang) * len * S); ctx.stroke();
-          }
-        });
-      }
-      ctx.restore();
-    }
-    var rim = Math.max(1, S * 0.012);
-    body('rgba(200,214,240,0.58)', rim, 'rgba(170,195,240,0.5)');   // softer moonlight rim
-    body('#05070c', 0, null);
-    if (st.eyes > 0.01) {
-      var ex = X(pose.head) + pose.hr * S * 0.5, ey = Y(pose.head) - pose.hr * S * 0.15, r = Math.max(1.5, 0.016 * S);
-      ctx.save(); ctx.globalAlpha = st.eyes; ctx.fillStyle = '#ff3320'; ctx.shadowColor = '#ff3320'; ctx.shadowBlur = 8;
-      ctx.beginPath(); ctx.arc(ex, ey, r, 0, 7); ctx.arc(ex + r * 2.6, ey + r * 0.3, r * 0.85, 0, 7); ctx.fill(); ctx.restore();
-    }
+    var car = carAt(t), w = where(t);
+    if (w && w.o > 0.01) {
+      var S = M.S * 0.95;
+      var dx = lastX === null ? 0 : w.x - lastX;
+      if (Math.abs(dx) < S * 0.3) ph += Math.abs(dx) * Math.PI / (2 * 0.11 * S * 1.25);
+      if (Math.abs(dx) > 0.4 && Math.abs(dx) < S * 0.3) face = dx < 0 ? -1 : 1;
+      lastX = w.x;
+      var go = Math.min(1, Math.abs(dx) / (S * 0.008));
+      var pose = formAt(t, ph, go, w.force);
+      // opacity breathes, so it never quite feels solid
+      var breath = 0.55 + 0.25 * Math.sin(t * 2.3) + 0.2 * Math.sin(t * 5.7 + 1.3);
+      render(w.back ? cB : cF, pose, w.x, w.y, S, face < 0, w.o * Math.max(0.4, Math.min(1, breath)), t, w.eyes);
+    } else lastX = null;
+    drawCar(cF, car, M.S);
     requestAnimationFrame(draw);
   }
   requestAnimationFrame(draw);
