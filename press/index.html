@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b0f1a">
+<meta name="robots" content="noindex">
+<title>WALKERS | Press Kit</title>
+<meta name="description" content="Press kit for WALKERS, a horror-comedy short film from Prism Entertainment.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="WALKERS | Press Kit">
+<meta property="og:description" content="Logline, synopsis, stills, credits and contact for the horror-comedy short WALKERS.">
+<meta property="og:url" content="https://walkers.prismentmt.com/press/">
+<meta property="og:image" content="https://walkers.prismentmt.com/og-image.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Same night-desert world as the Give page, laid out as a reading document. Single dark theme by choice. */
+:root {
+  --night: #0b0f1a;
+  --night-2: #141a2a;
+  --sand: #ece3d2;
+  --dust: #9a9fb0;
+  --sodium: #f4a63a;
+  --rule: #262d40;
+  --display: "Big Shoulders Display", "Arial Narrow", "Impact", sans-serif;
+  --body: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  color-scheme: dark;
+}
+html, body { margin: 0; background: var(--night); overflow-x: clip; }
+body { color: var(--sand); font-family: var(--body); font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+img { max-width: 100%; display: block; }
+a { color: var(--sand); }
+a:hover { color: var(--sodium); }
+a:focus-visible, .btn:focus-visible { outline: 2px solid var(--sodium); outline-offset: 3px; }
+
+.wrap {
+  max-width: 760px; margin: 0 auto; box-sizing: border-box;
+  padding-left: max(20px, env(safe-area-inset-left, 0px));
+  padding-right: max(20px, env(safe-area-inset-right, 0px));
+  padding-top: calc(24px + env(safe-area-inset-top, 0px));
+  padding-bottom: calc(48px + env(safe-area-inset-bottom, 0px));
+}
+.top { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.back, .eyebrow, .k, h2, .tag, footer {
+  font-family: var(--mono); font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase;
+}
+.back { color: var(--dust); text-decoration: none; }
+.eyebrow { color: var(--sodium); margin: 28px 0 0; }
+h1 {
+  font-family: var(--display); font-weight: 900; text-transform: uppercase; margin: 6px 0 0;
+  font-size: clamp(60px, 18vw, 150px); line-height: 0.82; letter-spacing: 0.01em;
+}
+.tags { display: flex; flex-wrap: wrap; gap: 6px 14px; margin: 14px 0 0; padding: 0; list-style: none; }
+.tag { color: var(--sodium); }
+.tag + .tag::before { content: "\2022"; color: var(--dust); margin-right: 14px; }
+.actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
+.btn {
+  display: inline-flex; align-items: center; gap: 10px; min-height: 48px; padding: 0 18px; box-sizing: border-box;
+  border-radius: 6px; text-decoration: none; font: 800 20px/1 var(--display); text-transform: uppercase; letter-spacing: 0.03em;
+  background: var(--sodium); color: var(--night); border: 1px solid var(--sodium);
+}
+.btn:hover { color: var(--night); background: #ffb64f; }
+.btn.ghost { background: transparent; color: var(--sand); border-color: var(--rule); }
+.btn.ghost:hover { border-color: var(--sodium); color: var(--sodium); }
+
+section { margin-top: 56px; }
+h2 { color: var(--sodium); margin: 0 0 14px; padding-bottom: 10px; border-bottom: 1px solid var(--rule); font-size: 13px; }
+h3 { font-family: var(--display); font-weight: 800; text-transform: uppercase; font-size: 28px; line-height: 1; margin: 0 0 4px; letter-spacing: 0.02em; }
+p { margin: 0 0 14px; max-width: 64ch; }
+.logline { font-size: clamp(22px, 5vw, 28px); line-height: 1.35; font-weight: 600; max-width: 30ch; text-wrap: balance; }
+.label { font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--dust); margin: 22px 0 6px; }
+.label:first-of-type { margin-top: 0; }
+
+.facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 28px; margin: 0; }
+.facts div { padding: 12px 0; border-bottom: 1px solid var(--rule); min-width: 0; }
+.facts dt { font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--dust); }
+.facts dd { margin: 2px 0 0; font-weight: 600; }
+@media (max-width: 520px) { .facts { grid-template-columns: minmax(0, 1fr); } }
+
+.video { position: relative; display: block; aspect-ratio: 16 / 9; max-width: 100%; border-radius: 6px; overflow: hidden; border: 1px solid var(--rule); background: #000; }
+.video video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.video-cta { position: absolute; left: 12px; bottom: 12px; padding: 8px 12px; border-radius: 999px; background: rgba(11,15,26,.75); font: 600 14px/1 var(--body); color: var(--sand); }
+.video:hover .video-cta { background: var(--sodium); color: var(--night); }
+
+.stills { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.stills a { display: block; border-radius: 4px; overflow: hidden; border: 1px solid var(--rule); aspect-ratio: 16 / 9; background: #000; }
+.stills img { width: 100%; height: 100%; object-fit: cover; transition: transform .3s ease; }
+.stills a:hover img { transform: scale(1.03); }
+.stills a.wide { grid-column: 1 / -1; }
+.note { font-size: 14px; color: var(--dust); }
+
+.people { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; }
+@media (max-width: 600px) { .people { grid-template-columns: minmax(0, 1fr); } }
+.role { font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--sodium); margin: 0 0 10px; }
+.person p { font-size: 16px; }
+.headshot { width: 88px; height: 88px; border-radius: 50%; background: var(--night-2); border: 1px dashed var(--rule); display: grid; place-items: center; color: var(--dust); font: 500 11px/1 var(--mono); letter-spacing: .1em; margin-bottom: 14px; }
+
+.credits { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 28px; margin: 0; }
+@media (max-width: 520px) { .credits { grid-template-columns: minmax(0, 1fr); } }
+.credits div { display: flex; justify-content: space-between; gap: 16px; padding: 9px 0; border-bottom: 1px solid var(--rule); min-width: 0; }
+.credits dt { color: var(--dust); font-size: 15px; }
+.credits dd { margin: 0; font-weight: 600; font-size: 15px; text-align: right; }
+
+.poster-ph { aspect-ratio: 2 / 3; max-width: 260px; border: 1px dashed var(--rule); border-radius: 4px; display: grid; place-items: center; text-align: center; padding: 20px; box-sizing: border-box; color: var(--dust); font-size: 14px; }
+
+.todo { background: rgba(244,166,58,.14); color: var(--sodium); padding: 0 4px; border-radius: 3px; font-style: normal; }
+
+footer { margin-top: 64px; padding-top: 18px; border-top: 1px solid var(--rule); display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; color: #6c7286; font-size: 11px; }
+footer a { color: var(--sand); text-decoration: none; }
+</style>
+</head>
+<body>
+<main class="wrap">
+
+  <div class="top">
+    <a class="back" href="/">&larr; walkers.prismentmt.com</a>
+  </div>
+
+  <header>
+    <p class="eyebrow">Prism Entertainment &middot; Press kit</p>
+    <h1>Walkers</h1>
+    <ul class="tags">
+      <li class="tag">Horror-comedy</li>
+      <li class="tag">Short film</li>
+      <li class="tag">In post</li>
+    </ul>
+    <div class="actions">
+      <a class="btn" href="walkers-stills.zip" download>Download stills &darr;</a>
+      <a class="btn ghost" href="https://www.youtube.com/watch?v=RRduHV5Navg" target="_blank" rel="noopener">Watch the teaser &nearr;</a>
+    </div>
+  </header>
+
+  <section aria-labelledby="h-logline">
+    <h2 id="h-logline">Logline</h2>
+    <p class="logline">On a late-night drive through the desert, four friends are too busy roasting each other to notice that something has started following them.</p>
+  </section>
+
+  <section aria-labelledby="h-facts">
+    <h2 id="h-facts">At a glance</h2>
+    <dl class="facts">
+      <div><dt>Title</dt><dd>WALKERS</dd></div>
+      <div><dt>Genre</dt><dd>Horror-comedy</dd></div>
+      <div><dt>Runtime</dt><dd>Approx. 6 minutes</dd></div>
+      <div><dt>Status</dt><dd>In post-production</dd></div>
+      <div><dt>Premiere</dt><dd>Dec 2026 (TBC)</dd></div>
+      <div><dt>Country / Language</dt><dd>USA / English</dd></div>
+      <div><dt>Filmed in</dt><dd>Apple Valley, California</dd></div>
+      <div><dt>Camera</dt><dd>ARRI Alexa 35</dd></div>
+      <div><dt>Production company</dt><dd>Prism Entertainment</dd></div>
+      <div><dt>Director</dt><dd>Christina Woo</dd></div>
+    </dl>
+  </section>
+
+  <section aria-labelledby="h-synopsis">
+    <h2 id="h-synopsis">Synopsis</h2>
+    <p class="label">Short</p>
+    <p>Four friends cut through the Mojave on a late-night road trip, trading jabs about dating apps, breakups and who's really who. When the talk turns to skinwalkers, only one of them takes it seriously. Then they stop for gas.</p>
+    <p class="label">Long</p>
+    <p>Somewhere past midnight on an empty desert highway, Leila, Artie, Jacob and Claire are deep into a road trip and fully out of patience with each other. Claire needs a bathroom, badly. Jacob won't take anything seriously, including his relationship with Claire. Artie's heavily filtered dating-app photos are up for review. And Leila, the driver, would very much like everyone to stop saying the word "skinwalker" after dark.</p>
+    <p>When they pull into a lonely gas station, the bickering turns sharper and more personal, and nobody is paying attention to what's showing up in the side mirror.</p>
+  </section>
+
+  <section aria-labelledby="h-teaser">
+    <h2 id="h-teaser">Teaser</h2>
+    <a class="video" href="https://www.youtube.com/watch?v=RRduHV5Navg" target="_blank" rel="noopener" aria-label="Watch the Walkers teaser with sound on YouTube">
+      <video src="../teaser.mp4" poster="../teaser-poster.jpg" autoplay muted loop playsinline preload="metadata" aria-hidden="true"></video>
+      <span class="video-cta">&#9654; Watch with sound</span>
+    </a>
+  </section>
+
+  <section aria-labelledby="h-stills">
+    <h2 id="h-stills">Stills</h2>
+    <div class="stills">
+      <a class="wide" href="stills/walkers-still-01.jpg" target="_blank" rel="noopener"><img src="stills/walkers-still-01.jpg" alt="The four friends packed into the car at night" loading="lazy"></a>
+      <a href="stills/walkers-still-03.jpg" target="_blank" rel="noopener"><img src="stills/walkers-still-03.jpg" alt="Jacob and Leila leaning over from the back seat" loading="lazy"></a>
+      <a href="stills/walkers-still-04.jpg" target="_blank" rel="noopener"><img src="stills/walkers-still-04.jpg" alt="Artie in glasses, lit by gas station lights" loading="lazy"></a>
+      <a href="stills/walkers-still-05.jpg" target="_blank" rel="noopener"><img src="stills/walkers-still-05.jpg" alt="Leila looking up from the driver's seat, frightened" loading="lazy"></a>
+      <a href="stills/walkers-still-06.jpg" target="_blank" rel="noopener"><img src="stills/walkers-still-06.jpg" alt="Hands scrolling a dating app in the dark" loading="lazy"></a>
+      <a class="wide" href="stills/walkers-still-07.jpg" target="_blank" rel="noopener"><img src="stills/walkers-still-07.jpg" alt="The car parked under the canopy of an empty desert gas station" loading="lazy"></a>
+      <a class="wide" href="stills/walkers-still-02.jpg" target="_blank" rel="noopener"><img src="stills/walkers-still-02.jpg" alt="Desert ridge at dusk" loading="lazy"></a>
+    </div>
+    <p class="note" style="margin-top:12px">Tap a still to open it full size. All stills &copy; 2026 Prism Entertainment.</p>
+  </section>
+
+  <section aria-labelledby="h-statement">
+    <h2 id="h-statement">Director's statement</h2>
+    <p>Walkers is about the bubble of the self. Four friends drive through a vast, ancient landscape, but their world is only as wide as a phone screen and the inside of a 2013 Subaru. The title works two ways. It names the thing moving in the shadows, and it describes the friends themselves: young people constantly shifting their skins to fit dating profiles, social pecking orders and other people's expectations.</p>
+    <p>I've always been drawn to inattentional blindness, the way we can miss a monster standing right in front of us because we're too busy arguing about who we are. The dialogue is fast, funny and defensive. Leila hides behind a cool-girl front, Artie edits himself to find connection, and Jacob jokes his way out of commitment.</p>
+    <p>We built the look on a contrast between the warm, cluttered car and the cold, endless desert. Inside, the frame is tight and busy, lit by phone screens and fast-food wrappers. Outside, the camera turns wide and patient, and whatever is out there is only ever glimpsed in pieces, in side mirrors and reflections.</p>
+    <p>I want audiences to walk away feeling watched by something they chose to ignore, and asking themselves who they're leaving behind while they're busy looking at themselves.</p>
+    <p class="note">&mdash; Christina Woo, Director</p>
+  </section>
+
+  <section aria-labelledby="h-team">
+    <h2 id="h-team">Key creatives</h2>
+    <div class="people">
+      <div class="person">
+        <div class="headshot" aria-hidden="true">PHOTO</div>
+        <h3>Christina Woo</h3>
+        <p class="role">Writer &amp; Director</p>
+        <p>Christina Woo is a writer and director who comes to live action from animation. Walkers is her first live-action film. Her writing is known for quick, dry, very online dialogue, built around characters who roast each other to avoid saying what they actually feel. <em class="todo">[One more line: past work, a festival, or what's next.]</em></p>
+      </div>
+      <div class="person">
+        <div class="headshot" aria-hidden="true">PHOTO</div>
+        <h3>Teddy Hawke</h3>
+        <p class="role">Producer</p>
+        <p>Teddy Hawke is an independent film producer and the founder of Prism Entertainment, a production and development company that works with independent artists on micro- and low-budget projects. He came to film from marketing, and he focuses on contained, producible genre stories with room to grow. Walkers is the first step toward a skinwalker anthology series.</p>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-series">
+    <h2 id="h-series">The series</h2>
+    <p>Walkers is the first chapter of a planned anthology series. Each episode is a standalone story about ordinary people crossing paths with skinwalkers, with its own characters, setting and dark sense of humor. Same rules, new victims.</p>
+  </section>
+
+  <section aria-labelledby="h-credits">
+    <h2 id="h-credits">Credits</h2>
+    <p class="label">Cast</p>
+    <dl class="credits">
+      <div><dt>Leila</dt><dd>Sophia Delphi</dd></div>
+      <div><dt>Jacob</dt><dd>Luke Steinborn</dd></div>
+      <div><dt>Artie</dt><dd>Jammel Ives</dd></div>
+      <div><dt>Claire</dt><dd><em class="todo">[Name]</em></dd></div>
+    </dl>
+    <p class="label">Crew</p>
+    <dl class="credits">
+      <div><dt>Written &amp; directed by</dt><dd>Christina Woo</dd></div>
+      <div><dt>Producer</dt><dd>Teddy Hawke</dd></div>
+      <div><dt>Director of photography</dt><dd>Karl-Erik Mills</dd></div>
+      <div><dt>Editor</dt><dd>Rodrigo Calderon</dd></div>
+      <div><dt>Assistant editor</dt><dd>Kimberly Perez</dd></div>
+      <div><dt>Visual effects</dt><dd>JJ Murphy</dd></div>
+      <div><dt>Original score</dt><dd>Emily <em class="todo">[Last name]</em></dd></div>
+      <div><dt>Colorist</dt><dd>Roy <em class="todo">[Last name]</em></dd></div>
+      <div><dt>Sound</dt><dd>Su <em class="todo">[Last name]</em></dd></div>
+      <div><dt>Wardrobe</dt><dd>Ev <em class="todo">[Last name]</em></dd></div>
+      <div><dt>1st AC</dt><dd>Kit Kocanda</dd></div>
+      <div><dt>Production assistants</dt><dd>Colin <em class="todo">[Last name]</em>, Ryan Pope</dd></div>
+    </dl>
+  </section>
+
+  <section aria-labelledby="h-poster">
+    <h2 id="h-poster">Poster</h2>
+    <div class="poster-ph">Official poster<br>coming Dec 2026</div>
+  </section>
+
+  <section aria-labelledby="h-contact">
+    <h2 id="h-contact">Contact</h2>
+    <p>Press, festival and screening inquiries:<br><strong><em class="todo">[contact email]</em></strong></p>
+    <p>Prism Entertainment &middot; <a href="https://prismentmt.com/" target="_blank" rel="noopener">prismentmt.com</a><br>
+    Instagram &middot; <a href="https://www.instagram.com/walkersshortfilm/" target="_blank" rel="noopener">@walkersshortfilm</a></p>
+  </section>
+
+  <footer>
+    <span>Objects in mirror are closer than they appear</span>
+    <a href="/">Support the film &rarr;</a>
+  </footer>
+</main>
+</body>
+</html>
