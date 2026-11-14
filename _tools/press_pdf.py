@@ -59,3 +59,13 @@ with sync_playwright() as p:
            margin={'top': '0.5in', 'right': '0', 'bottom': '0.5in', 'left': '0'})
     b.close()
 print('wrote', out, round(out.stat().st_size / 1e6, 1), 'MB')
+
+# give the download link a new address whenever the PDF changes, so phones and browsers
+# can't serve a stale cached copy
+import hashlib, re
+ver = hashlib.sha1(out.read_bytes()).hexdigest()[:8]
+page = root / 'press' / 'index.html'
+html = page.read_text()
+html, n = re.subn(r'href="walkers-press-kit\.pdf(\?v=[0-9a-f]+)?"', f'href="walkers-press-kit.pdf?v={ver}"', html)
+page.write_text(html)
+print('link version', ver, '(%d link)' % n)
