@@ -190,15 +190,16 @@ footer a { color: var(--sand); text-decoration: none; }
   section p, details p { max-width: 74ch; }
   .person p { max-width: none; }
   .facts { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .stills { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .stills { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .stills a.wide:first-child { grid-column: span 2; grid-row: span 2; aspect-ratio: auto; }
-  .stills a.wide:not(:first-child):not(:last-child) { grid-column: auto; }
-  .stills a.wide:last-child { grid-column: 1 / -1; aspect-ratio: 21 / 9; }
+  .stills a.wide:not(:first-child) { grid-column: span 2; grid-row: auto; aspect-ratio: 32 / 9; }
   .bts { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .bts2 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .bts2.bts-feature { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .bts2 a.wide { grid-column: 1 / -1; }
-  .video { max-width: 880px; }
+  .video { max-width: none; }
+  .pair { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 48px; align-items: start; margin-top: 56px; }
+  .pair > section { margin-top: 0; }
   .people { gap: 40px; }
   .credits { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 36px; }
 }
@@ -216,6 +217,8 @@ footer a { color: var(--sand); text-decoration: none; }
   .video-play::after { content: ''; position: absolute; left: 30px; top: 22px; border-style: solid; border-width: 16px 0 16px 26px; border-color: transparent transparent transparent var(--night); }
   .video-cta { z-index: 2; background: var(--sodium); color: var(--night); font-size: 15px; padding: 9px 14px; }
   section { margin-top: 34px; }
+  .pair { display: block; }
+  .pair > section { margin-top: 34px; }
   h2 { break-after: avoid; }
   .person, .stills a, .bts a, .bts2 a, .credits > div, .poster, .video, .facts > *, blockquote, figure { break-inside: avoid; }
   .people { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
@@ -283,6 +286,7 @@ footer a { color: var(--sand); text-decoration: none; }
     </dl>
   </section>
 
+  <div class="pair">
   <section aria-labelledby="h-synopsis">
     <h2 id="h-synopsis">Synopsis</h2>
     <p class="label">Short</p>
@@ -304,6 +308,7 @@ footer a { color: var(--sand); text-decoration: none; }
     </a>
     <p class="note print-only" style="margin-top:10px">Watch the teaser: <a href="https://www.youtube.com/watch?v=RRduHV5Navg">youtube.com/watch?v=RRduHV5Navg</a></p>
   </section>
+  </div>
 
   <section aria-labelledby="h-stills">
     <h2 id="h-stills">Stills</h2>
