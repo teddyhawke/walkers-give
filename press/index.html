@@ -153,7 +153,6 @@ details.more[open] > summary { margin-bottom: 8px; }
   .bts a.lead img { object-position: 50% 35%; }
 }
 
-
 .people { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; }
 @media (max-width: 760px) { .people { grid-template-columns: minmax(0, 1fr); } }
 .role { font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--sodium); margin: 0 0 10px; }
@@ -225,6 +224,7 @@ footer a { color: var(--sand); text-decoration: none; }
   .video { max-width: none; }
   .pair { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 48px; align-items: start; margin-top: 56px; }
   .pair > section { margin-top: 0; }
+  .pair-end { grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); }
   .people { gap: 40px; }
   .credits { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 36px; }
 }
@@ -291,10 +291,22 @@ footer a { color: var(--sand); text-decoration: none; }
     </div>
   </header>
 
+  <div class="pair">
   <section aria-labelledby="h-logline">
     <h2 id="h-logline">Logline</h2>
     <p class="logline">On a late-night drive through the desert, four friends are too busy roasting each other to notice that something has started following them.</p>
   </section>
+  <section aria-labelledby="h-teaser">
+    <h2 id="h-teaser">Teaser</h2>
+    <a class="video" href="https://www.youtube.com/watch?v=RRduHV5Navg" target="_blank" rel="noopener" aria-label="Watch the Walkers teaser with sound on YouTube">
+      <video src="../teaser.mp4" poster="../teaser-poster.jpg" autoplay muted loop playsinline preload="metadata" aria-hidden="true"></video>
+      <span class="video-cta"><span class="screen-only">&#9654; Watch with sound</span><span class="print-only-i">Watch on YouTube</span></span>
+      <span class="video-play" aria-hidden="true"></span>
+    </a>
+    <p class="note screen-only-b" style="margin-top:10px">Want the full film? <a href="#request">Request a screener</a></p>
+    <p class="note print-only" style="margin-top:10px">Watch the teaser: <a href="https://www.youtube.com/watch?v=RRduHV5Navg">youtube.com/watch?v=RRduHV5Navg</a></p>
+  </section>
+  </div>
 
   <section aria-labelledby="h-facts">
     <h2 id="h-facts">At a glance</h2>
@@ -324,16 +336,9 @@ footer a { color: var(--sand); text-decoration: none; }
     <p>When they pull into a lonely gas station, the bickering turns sharper and more personal, and nobody is paying attention to what's showing up in the side mirror.</p>
     </details>
   </section>
-
-  <section aria-labelledby="h-teaser">
-    <h2 id="h-teaser">Teaser</h2>
-    <a class="video" href="https://www.youtube.com/watch?v=RRduHV5Navg" target="_blank" rel="noopener" aria-label="Watch the Walkers teaser with sound on YouTube">
-      <video src="../teaser.mp4" poster="../teaser-poster.jpg" autoplay muted loop playsinline preload="metadata" aria-hidden="true"></video>
-      <span class="video-cta"><span class="screen-only">&#9654; Watch with sound</span><span class="print-only-i">Watch on YouTube</span></span>
-      <span class="video-play" aria-hidden="true"></span>
-    </a>
-    <p class="note screen-only-b" style="margin-top:10px">Want the full film? <a href="#request">Request a screener</a></p>
-    <p class="note print-only" style="margin-top:10px">Watch the teaser: <a href="https://www.youtube.com/watch?v=RRduHV5Navg">youtube.com/watch?v=RRduHV5Navg</a></p>
+  <section aria-labelledby="h-series">
+    <h2 id="h-series">The series</h2>
+    <p>Walkers is the first chapter of a planned anthology. In every episode, a skinwalker slips into a group, whether a friend group, a family, a workplace or a small town, and quietly takes over its pecking order. Nobody notices, because everyone is too busy performing for each other. New people, new places, same rules.</p>
   </section>
   </div>
 
@@ -419,11 +424,6 @@ footer a { color: var(--sand); text-decoration: none; }
     </div>
   </section>
 
-  <section aria-labelledby="h-series">
-    <h2 id="h-series">The series</h2>
-    <p>Walkers is the first chapter of a planned anthology. In every episode, a skinwalker slips into a group, whether a friend group, a family, a workplace or a small town, and quietly takes over its pecking order. Nobody notices, because everyone is too busy performing for each other. New people, new places, same rules.</p>
-  </section>
-
   <section aria-labelledby="h-credits">
     <h2 id="h-credits">Credits</h2>
     <p class="label">Cast</p>
@@ -464,12 +464,6 @@ footer a { color: var(--sand); text-decoration: none; }
     </details>
   </section>
 
-  <section aria-labelledby="h-poster">
-    <h2 id="h-poster">Poster</h2>
-    <a class="poster" href="poster/walkers-poster-placeholder.jpg" target="_blank" rel="noopener"><img src="poster/walkers-poster-placeholder.jpg" alt="WALKERS key art: a desert gas station at night, ringed by Joshua trees, something crouched on the roof" loading="lazy"></a>
-    <p class="poster-note">Placeholder key art. Official poster coming Dec 2026.</p>
-  </section>
-
   <section aria-labelledby="h-request" id="request">
     <h2 id="h-request">Request a screener</h2>
     <p>Festival programmers, press and distributors: tell us who you are and what you need, and we'll send a private screener link or whatever else helps.</p>
@@ -502,12 +496,19 @@ footer a { color: var(--sand); text-decoration: none; }
     <p class="note print-only">Request a screener at walkers.prismentmt.com/press#request</p>
   </section>
 
+  <div class="pair pair-end">
+  <section aria-labelledby="h-poster">
+    <h2 id="h-poster">Poster</h2>
+    <a class="poster" href="poster/walkers-poster-placeholder.jpg" target="_blank" rel="noopener"><img src="poster/walkers-poster-placeholder.jpg" alt="WALKERS key art: a desert gas station at night, ringed by Joshua trees, something crouched on the roof" loading="lazy"></a>
+    <p class="poster-note">Placeholder key art. Official poster coming Dec 2026.</p>
+  </section>
   <section aria-labelledby="h-contact">
     <h2 id="h-contact">Contact</h2>
     <p>Press, festival and screening inquiries:<br><strong><a href="mailto:teddy@prismentmt.com">teddy@prismentmt.com</a></strong></p>
     <p>Prism Entertainment &middot; <a href="https://prismentmt.com/" target="_blank" rel="noopener">prismentmt.com</a><br>
     Instagram &middot; <a href="https://www.instagram.com/walkersshortfilm/" target="_blank" rel="noopener">@walkersshortfilm</a></p>
   </section>
+  </div>
 
   <footer>
     <span>Objects in mirror are closer than they appear</span>
@@ -683,7 +684,6 @@ footer a { color: var(--sand); text-decoration: none; }
       legs: [chain(a.legs[0], b.legs[0]), chain(a.legs[1], b.legs[1])] };
   }
 
-
   function carAt(t) {
     var a = -0.2 * W, b = 0.36 * W, c = 1.25 * W, x;
     if (t < 0.3) x = a;
@@ -735,7 +735,6 @@ footer a { color: var(--sand); text-decoration: none; }
     [-0.3, 0.3].forEach(function (u) { c.beginPath(); c.arc(U(u), gy - wr, wr, 0, 7); c.fill(); c.stroke(); });
     c.restore();
   }
-
 
   // ---- more bodies for it to pass through (same skeleton, so any one can flow into any other) ----
   function crawler(ph, go) {               // low, long, dog-like
