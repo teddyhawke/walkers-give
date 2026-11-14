@@ -463,11 +463,12 @@ footer a { color: var(--sand); text-decoration: none; }
       case 'HA': pose = blend(Hm, A, st.k); break;
     }
     var gy = H - 2;
-    var X = function (p) { return x + p.x * S; }, Y = function (p) { return gy - p.y * S; };
+    var WX = 1.25, TH = 1.75;
+    var X = function (p) { return x + p.x * S * WX; }, Y = function (p) { return gy - p.y * S; };
     ctx.strokeStyle = ctx.fillStyle = '#000';
     ctx.lineCap = 'round'; ctx.lineJoin = 'round';
     function line(pts, w) {
-      ctx.lineWidth = w * S; ctx.beginPath(); ctx.moveTo(X(pts[0]), Y(pts[0]));
+      ctx.lineWidth = w * S * TH; ctx.beginPath(); ctx.moveTo(X(pts[0]), Y(pts[0]));
       for (var i = 1; i < pts.length; i++) ctx.lineTo(X(pts[i]), Y(pts[i]));
       ctx.stroke();
     }
@@ -475,15 +476,15 @@ footer a { color: var(--sand); text-decoration: none; }
     line(pose.legs[1], pose.limb * 0.85); line(pose.arms[1], pose.limb * 0.85);
     line([pose.hip, pose.mid, pose.chest], pose.torso);
     line([pose.chest, pose.head], pose.limb * 1.2);
-    ctx.beginPath(); ctx.arc(X(pose.head), Y(pose.head), pose.hr * S, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(X(pose.head), Y(pose.head), pose.hr * S * 1.35, 0, Math.PI * 2); ctx.fill();
     line(pose.legs[0], pose.limb); line(pose.arms[0], pose.limb);
     // Joshua-tree spikes at the branch tips
     if (treeW > 0.02) {
-      ctx.lineWidth = 0.012 * S;
+      ctx.lineWidth = 0.022 * S;
       [pose.arms[0][2], pose.arms[1][2], pose.head].forEach(function (tip, j) {
         for (var k = 0; k < 11; k++) {
           var ang = -Math.PI / 2 + (k - 5) * 0.28 + j * 0.2;
-          var len = (0.05 + (k % 3) * 0.015) * treeW;
+          var len = (0.06 + (k % 3) * 0.02) * treeW;
           ctx.beginPath(); ctx.moveTo(X(tip), Y(tip));
           ctx.lineTo(X(tip) + Math.cos(ang) * len * S, Y(tip) + Math.sin(ang) * len * S); ctx.stroke();
         }
@@ -491,7 +492,7 @@ footer a { color: var(--sand); text-decoration: none; }
     }
     // eyes
     if (st.eyes > 0.01) {
-      var ex = X(pose.head) + pose.hr * S * 0.35, ey = Y(pose.head) - pose.hr * S * 0.1, r = Math.max(1.2, 0.012 * S);
+      var ex = X(pose.head) + pose.hr * S * 0.5, ey = Y(pose.head) - pose.hr * S * 0.15, r = Math.max(1.5, 0.016 * S);
       ctx.save(); ctx.globalAlpha = st.eyes; ctx.fillStyle = '#ff3320'; ctx.shadowColor = '#ff3320'; ctx.shadowBlur = 8;
       ctx.beginPath(); ctx.arc(ex, ey, r, 0, 7); ctx.arc(ex + r * 2.6, ey + r * 0.3, r * 0.85, 0, 7); ctx.fill(); ctx.restore();
     }
