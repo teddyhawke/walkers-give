@@ -35,6 +35,13 @@ with sync_playwright() as p:
     # the teaser loop becomes its poster frame, still linked to YouTube; load every lazy image
     pg.evaluate("""() => {
       document.querySelectorAll('details').forEach(d => d.open = true);
+      // BTS: one even mosaic of every photo, for a single page
+      const bts = document.querySelector('section[aria-labelledby="h-bts"]');
+      if (bts) {
+        const grid = document.createElement('div'); grid.className = 'bts-mosaic';
+        bts.querySelectorAll('a[href^="bts/"]').forEach(a => { const c = a.cloneNode(true); c.className = ''; grid.appendChild(c); });
+        bts.querySelector('h2').after(grid);
+      }
       document.querySelectorAll('img[loading]').forEach(i => i.removeAttribute('loading'));
       document.querySelectorAll('.video video').forEach(v => {
         const img = document.createElement('img'); img.src = v.getAttribute('poster');
