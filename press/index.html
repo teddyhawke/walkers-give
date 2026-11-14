@@ -184,6 +184,31 @@ details.more[open] > summary { margin-bottom: 8px; }
 footer { margin-top: 64px; padding-top: 18px; border-top: 1px solid var(--rule); display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; color: #6c7286; font-size: 11px; }
 footer a { color: var(--sand); text-decoration: none; }
 
+.req { margin-top: 18px; }
+.req-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; }
+.req label { display: block; font-family: var(--mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--dust); }
+.req input:not([type=checkbox]), .req select, .req textarea {
+  display: block; width: 100%; box-sizing: border-box; margin-top: 6px; padding: 12px 14px; border-radius: 6px;
+  border: 1px solid var(--rule); background: var(--night-2); color: var(--sand); font: 500 16px/1.4 var(--body); letter-spacing: 0; text-transform: none; }
+.req textarea { resize: vertical; }
+.req select { appearance: none; background-image: linear-gradient(45deg, transparent 50%, var(--dust) 50%), linear-gradient(135deg, var(--dust) 50%, transparent 50%);
+  background-position: calc(100% - 20px) 55%, calc(100% - 15px) 55%; background-size: 5px 5px; background-repeat: no-repeat; }
+.req input:focus, .req select:focus, .req textarea:focus { outline: none; border-color: var(--sodium); }
+.req [aria-invalid="true"] { border-color: #e0533d !important; }
+.req-need { border: 0; padding: 0; margin: 18px 0 0; }
+.req-need legend { padding: 0; margin-bottom: 8px; font-family: var(--mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--dust); }
+.req-need label { display: inline-flex; align-items: center; gap: 8px; margin: 0 18px 8px 0; font: 500 15px/1.3 var(--body); letter-spacing: 0; text-transform: none; color: var(--sand); cursor: pointer; }
+.req-need input { width: 18px; height: 18px; accent-color: var(--sodium); margin: 0; }
+.req-msg { margin-top: 14px; }
+.req .opt { color: var(--dust); opacity: .7; text-transform: none; letter-spacing: 0; }
+.req .hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+.req-foot { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-top: 18px; }
+.req-foot .btn[disabled] { opacity: .6; cursor: wait; }
+.req-status { margin: 0; font-size: 15px; }
+.req-status.ok { color: var(--sodium); }
+.req-status.err { color: #ff7a63; }
+.req.sent .req-grid, .req.sent .req-need, .req.sent .req-msg, .req.sent .req-foot .btn { display: none; }
+@media (min-width: 640px) { .req-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 18px; } }
 /* wide screens: use the room */
 @media (min-width: 1000px) {
   .wrap { max-width: 1160px; padding-left: 40px; padding-right: 40px; }
@@ -207,8 +232,9 @@ footer a { color: var(--sand); text-decoration: none; }
   @page { size: Letter; margin: 0.5in 0; background: #0b0f1a; }
   html, body { background: var(--night) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   .wrap { max-width: none; padding: 0 0.6in; }
-  .top, .walker, .jtree, .actions, .dl-label, .todo, .screen-only, details.more > summary { display: none !important; }
+  .top, .walker, .jtree, .req, .screen-only-b, .actions, .dl-label, .todo, .screen-only, details.more > summary { display: none !important; }
   .print-only { display: block; }
+  section#request > p:not(.print-only) { display: none; }
   .print-only-i { display: inline; }
   .print-only a { color: var(--sodium); }
   .video { border-color: var(--sodium); }
@@ -306,6 +332,7 @@ footer a { color: var(--sand); text-decoration: none; }
       <span class="video-cta"><span class="screen-only">&#9654; Watch with sound</span><span class="print-only-i">Watch on YouTube</span></span>
       <span class="video-play" aria-hidden="true"></span>
     </a>
+    <p class="note screen-only-b" style="margin-top:10px">Want the full film? <a href="#request">Request a screener</a></p>
     <p class="note print-only" style="margin-top:10px">Watch the teaser: <a href="https://www.youtube.com/watch?v=RRduHV5Navg">youtube.com/watch?v=RRduHV5Navg</a></p>
   </section>
   </div>
@@ -443,6 +470,38 @@ footer a { color: var(--sand); text-decoration: none; }
     <p class="poster-note">Placeholder key art. Official poster coming Dec 2026.</p>
   </section>
 
+  <section aria-labelledby="h-request" id="request">
+    <h2 id="h-request">Request a screener</h2>
+    <p>Festival programmers, press and distributors: tell us who you are and what you need, and we'll send a private screener link or whatever else helps.</p>
+    <form class="req" id="req-form" novalidate>
+      <div class="req-grid">
+        <label>Name<input name="name" autocomplete="name" required></label>
+        <label>Email<input name="email" type="email" autocomplete="email" required></label>
+        <label>Festival, outlet or company<input name="organization" autocomplete="organization" required></label>
+        <label>Role
+          <select name="role" required>
+            <option value="" selected disabled>Choose one</option>
+            <option>Festival programmer</option><option>Press / critic</option><option>Distributor / sales</option><option>Other</option>
+          </select>
+        </label>
+      </div>
+      <fieldset class="req-need">
+        <legend>What would you like?</legend>
+        <label><input type="checkbox" name="request" value="Screener" checked> Screener</label>
+        <label><input type="checkbox" name="request" value="Interview"> Interview</label>
+        <label><input type="checkbox" name="request" value="Hi-res stills &amp; poster"> Hi-res stills &amp; poster</label>
+        <label><input type="checkbox" name="request" value="Other"> Other</label>
+      </fieldset>
+      <label class="req-msg">Anything else? <span class="opt">(optional)</span><textarea name="message" rows="3"></textarea></label>
+      <input type="text" name="_gotcha" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <div class="req-foot">
+        <button class="btn" type="submit">Send request</button>
+        <p class="req-status" role="status" aria-live="polite"></p>
+      </div>
+    </form>
+    <p class="note print-only">Request a screener at walkers.prismentmt.com/press#request</p>
+  </section>
+
   <section aria-labelledby="h-contact">
     <h2 id="h-contact">Contact</h2>
     <p>Press, festival and screening inquiries:<br><strong><a href="mailto:teddy@prismentmt.com">teddy@prismentmt.com</a></strong></p>
@@ -455,6 +514,43 @@ footer a { color: var(--sand); text-decoration: none; }
     <a href="/">Support the film &rarr;</a>
   </footer>
 </main>
+<script>
+(function () {
+  var f = document.getElementById('req-form'); if (!f || !window.fetch) return;
+  var status = f.querySelector('.req-status'), btn = f.querySelector('button[type=submit]');
+  function say(msg, kind) { status.textContent = msg; status.className = 'req-status' + (kind ? ' ' + kind : ''); }
+  f.addEventListener('input', function (e) { if (e.target.getAttribute('aria-invalid') === 'true') e.target.setAttribute('aria-invalid', 'false'); });
+  f.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var bad = null;
+    ['name', 'email', 'organization', 'role'].forEach(function (n) {
+      var el = f.elements[n], ok = el.value.trim() !== '' && (n !== 'email' || /.+@.+\..+/.test(el.value));
+      el.setAttribute('aria-invalid', ok ? 'false' : 'true'); if (!ok && !bad) bad = el;
+    });
+    var wants = [].slice.call(f.querySelectorAll('input[name=request]:checked')).map(function (c) { return c.value; });
+    if (bad) { say('Please fill in the highlighted fields.', 'err'); bad.focus(); return; }
+    if (!wants.length) { say('Pick at least one thing you would like.', 'err'); return; }
+    var data = {
+      name: f.elements.name.value.trim(), email: f.elements.email.value.trim(),
+      organization: f.elements.organization.value.trim(), role: f.elements.role.value,
+      request: wants.join(', '), message: f.elements.message.value.trim(),
+      _subject: 'WALKERS screener request: ' + f.elements.organization.value.trim(),
+      _gotcha: f.elements._gotcha.value
+    };
+    btn.disabled = true; say('Sending\u2026');
+    fetch('https://formspree.io/f/mvkaznll', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(data) })
+      .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return { ok: r.ok, j: j }; }); })
+      .then(function (res) {
+        btn.disabled = false;
+        if (res.ok) { f.classList.add('sent'); say('Thanks, ' + data.name.split(' ')[0] + '. We got your request and will be in touch soon.', 'ok'); return; }
+        var errs = (res.j && res.j.errors) || [];
+        errs.forEach(function (er) { if (er.field && f.elements[er.field]) f.elements[er.field].setAttribute('aria-invalid', 'true'); });
+        say(errs.length ? errs.map(function (er) { return er.message; }).join(' ') : 'Something went wrong. Please email teddy@prismentmt.com instead.', 'err');
+      })
+      .catch(function () { btn.disabled = false; say('Could not send. Please email teddy@prismentmt.com instead.', 'err'); });
+  });
+})();
+</script>
 <script>
 (function () {
   var cv = document.getElementById('jtree'); if (!cv || !cv.getContext) return;
