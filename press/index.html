@@ -56,7 +56,13 @@ h1 {
 }
 
 /* Mirror reflection under the title; something passes through it now and then */
-.mirror-wrap { position: relative; overflow: hidden; height: calc(clamp(60px, 18vw, 150px) * 0.3); margin-top: 2px; }
+.mirror-wrap {
+  position: relative; overflow: hidden; margin-top: 2px;
+  height: calc(clamp(60px, 18vw, 150px) * 0.5);
+  background: radial-gradient(70% 120% at 50% 0%, rgba(244,166,58,.16), rgba(244,166,58,.05) 45%, transparent 75%);
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+          mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+}
 .mirror {
   position: absolute; top: 0; left: 0; margin: 0;
   font-family: var(--display); font-weight: 900; text-transform: uppercase;
@@ -68,19 +74,20 @@ h1 {
   user-select: none;
 }
 .walker {
-  position: absolute; bottom: -2px; left: 0; width: clamp(70px, 16vw, 120px); height: auto;
-  color: #05070d; opacity: 0; filter: blur(0.6px);
-  animation: creep 26s linear infinite; animation-delay: 4s;
+  position: absolute; bottom: -4px; left: 0; width: clamp(120px, 30vw, 210px); height: auto;
+  color: #000; opacity: 0;
+  animation: creep 18s linear infinite; animation-delay: 1.5s;
 }
-.walker .eye { fill: #ff2b1a; opacity: 0; animation: glint 26s linear infinite; animation-delay: 4s; }
+.walker .eye { fill: #ff3320; opacity: 0; filter: drop-shadow(0 0 2px #ff3320) drop-shadow(0 0 5px #ff3320); animation: glint 18s linear infinite; animation-delay: 1.5s; }
 @keyframes creep {
-  0%   { transform: translateX(-140px); opacity: 0; }
-  3%   { opacity: .85; }
-  55%  { transform: translateX(calc(100vw)); opacity: .85; }
-  56%, 100% { transform: translateX(calc(100vw)); opacity: 0; }
+  0%   { transform: translateX(-220px); opacity: 1; }
+  28%  { transform: translateX(calc(45vw - 110px)); }
+  36%  { transform: translateX(calc(45vw - 110px)); }
+  70%  { transform: translateX(110vw); opacity: 1; }
+  71%, 100% { transform: translateX(110vw); opacity: 0; }
 }
 @keyframes glint {
-  0%, 26% { opacity: 0; } 27%, 29% { opacity: 1; } 30%, 100% { opacity: 0; }
+  0%, 27% { opacity: 0; } 29%, 35% { opacity: 1; } 37%, 100% { opacity: 0; }
 }
 @media (prefers-reduced-motion: reduce) { .walker { display: none; } }
 .tags { display: flex; flex-wrap: nowrap; gap: 10px; margin: 14px 0 0; padding: 0; list-style: none; white-space: nowrap; }
