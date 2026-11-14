@@ -488,31 +488,38 @@ footer a { color: var(--sand); text-decoration: none; }
     var gy = st.gy;
     var WX = 1.25, TH = 1.75;
     var X = function (p) { return x + p.x * S * WX; }, Y = function (p) { return gy - p.y * S; };
-    ctx.strokeStyle = ctx.fillStyle = '#000';
     ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-    function line(pts, w) {
-      ctx.lineWidth = w * S * TH; ctx.beginPath(); ctx.moveTo(X(pts[0]), Y(pts[0]));
-      for (var i = 1; i < pts.length; i++) ctx.lineTo(X(pts[i]), Y(pts[i]));
-      ctx.stroke();
+    // draw the body twice: a pale moonlit rim first, then the black figure inside it
+    function body(col, pad, glow) {
+      ctx.save();
+      ctx.strokeStyle = ctx.fillStyle = col;
+      if (glow) { ctx.shadowColor = glow; ctx.shadowBlur = Math.max(6, S * 0.12); }
+      function line(pts, w) {
+        ctx.lineWidth = w * S * TH + pad * 2; ctx.beginPath(); ctx.moveTo(X(pts[0]), Y(pts[0]));
+        for (var i = 1; i < pts.length; i++) ctx.lineTo(X(pts[i]), Y(pts[i]));
+        ctx.stroke();
+      }
+      line(pose.legs[1], pose.limb * 0.85); line(pose.arms[1], pose.limb * 0.85);
+      line([pose.hip, pose.mid, pose.chest], pose.torso);
+      line([pose.chest, pose.head], pose.limb * 1.2);
+      ctx.beginPath(); ctx.arc(X(pose.head), Y(pose.head), pose.hr * S * 1.35 + pad, 0, Math.PI * 2); ctx.fill();
+      line(pose.legs[0], pose.limb); line(pose.arms[0], pose.limb);
+      if (treeW > 0.02) {   // Joshua-tree spikes at the branch tips
+        ctx.lineWidth = 0.022 * S + pad * 2;
+        [pose.arms[0][2], pose.arms[1][2], pose.head].forEach(function (tip, j) {
+          for (var k = 0; k < 11; k++) {
+            var ang = -Math.PI / 2 + (k - 5) * 0.28 + j * 0.2;
+            var len = (0.06 + (k % 3) * 0.02) * treeW;
+            ctx.beginPath(); ctx.moveTo(X(tip), Y(tip));
+            ctx.lineTo(X(tip) + Math.cos(ang) * len * S, Y(tip) + Math.sin(ang) * len * S); ctx.stroke();
+          }
+        });
+      }
+      ctx.restore();
     }
-    // far-side limbs a touch thinner
-    line(pose.legs[1], pose.limb * 0.85); line(pose.arms[1], pose.limb * 0.85);
-    line([pose.hip, pose.mid, pose.chest], pose.torso);
-    line([pose.chest, pose.head], pose.limb * 1.2);
-    ctx.beginPath(); ctx.arc(X(pose.head), Y(pose.head), pose.hr * S * 1.35, 0, Math.PI * 2); ctx.fill();
-    line(pose.legs[0], pose.limb); line(pose.arms[0], pose.limb);
-    // Joshua-tree spikes at the branch tips
-    if (treeW > 0.02) {
-      ctx.lineWidth = 0.022 * S;
-      [pose.arms[0][2], pose.arms[1][2], pose.head].forEach(function (tip, j) {
-        for (var k = 0; k < 11; k++) {
-          var ang = -Math.PI / 2 + (k - 5) * 0.28 + j * 0.2;
-          var len = (0.06 + (k % 3) * 0.02) * treeW;
-          ctx.beginPath(); ctx.moveTo(X(tip), Y(tip));
-          ctx.lineTo(X(tip) + Math.cos(ang) * len * S, Y(tip) + Math.sin(ang) * len * S); ctx.stroke();
-        }
-      });
-    }
+    var rim = Math.max(1.5, S * 0.022);
+    body('rgba(200,214,240,0.9)', rim, 'rgba(170,195,240,0.85)');   // moonlight rim + halo
+    body('#05070c', 0, null);                                        // the creature
     // eyes
     if (st.eyes > 0.01) {
       var ex = X(pose.head) + pose.hr * S * 0.5, ey = Y(pose.head) - pose.hr * S * 0.15, r = Math.max(1.5, 0.016 * S);
