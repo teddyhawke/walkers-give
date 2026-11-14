@@ -88,7 +88,7 @@ h1 {
 .actions .btn { flex: 1 1 0; justify-content: center; min-width: 0; padding: 0 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 16px; }
 @media (min-width: 600px) { .actions .btn { flex: 0 0 auto; padding: 0 18px; } }
 @media (min-width: 600px) { .actions .btn { font-size: 20px; } }
-@media (max-width: 599px) { .actions .long { display: none; } }
+@media (max-width: 599px) { .actions .long { display: none; } .actions .btn:first-child { flex-grow: 1.35; } }
 .btn {
   display: inline-flex; align-items: center; gap: 10px; min-height: 48px; padding: 0 18px; box-sizing: border-box;
   border-radius: 6px; text-decoration: none; font: 800 20px/1 var(--display); text-transform: uppercase; letter-spacing: 0.03em;
@@ -237,7 +237,7 @@ footer a { color: var(--sand); text-decoration: none; }
       <li class="tag">In post</li>
     </ul>
     <div class="actions">
-      <a class="btn" href="walkers-press-kit.pdf" download>Press kit PDF</a>
+      <a class="btn" href="walkers-press-kit.pdf" download>Download PDF</a>
       <a class="btn ghost" href="walkers-stills.zip" download><span class="long">Download </span>stills</a>
       <a class="btn ghost" href="https://www.youtube.com/watch?v=RRduHV5Navg" target="_blank" rel="noopener"><span class="long">Watch </span>teaser</a>
     </div>
