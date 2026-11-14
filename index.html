@@ -95,7 +95,7 @@ h1 {
   font-family: var(--mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase;
   color: var(--sodium);
 }
-.event li + li::before { content: "/"; color: var(--rule); margin-right: 14px; }
+.event li + li::before { content: "\2022"; color: var(--dust); margin-right: 14px; }
 .intro { margin: 10px 0 0; color: var(--sand); font-size: 17px; max-width: 34ch; }
 .intro + .intro { margin-top: 12px; }
 .lockup { display: flex; align-items: center; gap: 14px; }
@@ -250,9 +250,11 @@ footer {
     </div>
     <h1>Walkers</h1>
     <div class="mirror" aria-hidden="true">Walkers</div>
-    <p class="intro">
-      Thank you for supporting Walkers. This film was built by a community of filmmakers, artists, and businesses. We're still finishing VFX, sound, color, and score. If you're able, help us get there.
-    </p>
+    <ul class="event" aria-label="About the film">
+      <li>Horror</li>
+      <li>Short film</li>
+      <li>Coming soon</li>
+    </ul>
   </header>
 
   <nav class="actions" aria-label="Walkers links">
