@@ -74,6 +74,8 @@ h1 {
   user-select: none;
 }
 .title-stage { position: relative; }
+.title-stage h1 { position: relative; z-index: 1; }
+.walker.back { z-index: 0; }
 .walker { position: absolute; left: 0; right: 0; top: -28px; bottom: 0; width: 100%; height: calc(100% + 28px); display: block; pointer-events: none; z-index: 2; }
 @media (prefers-reduced-motion: reduce) { .walker { display: none; } }
 .tags { display: flex; flex-wrap: nowrap; gap: 10px; margin: 14px 0 0; padding: 0; list-style: none; white-space: nowrap; }
@@ -170,6 +172,7 @@ footer a { color: var(--sand); text-decoration: none; }
   <header>
     <p class="eyebrow">Prism Entertainment &middot; Press kit</p>
     <div class="title-stage">
+    <canvas class="walker back" id="walker-back" aria-hidden="true"></canvas>
     <h1 id="title">Walkers</h1>
     <div class="mirror-wrap" id="mirror-band" aria-hidden="true">
       <div class="mirror">Walkers</div>
@@ -358,35 +361,34 @@ footer a { color: var(--sand); text-decoration: none; }
 </main>
 <script>
 (function () {
-  var cv = document.getElementById('walker');
-  if (!cv || !cv.getContext) return;
+  var front = document.getElementById('walker'), back = document.getElementById('walker-back');
+  if (!front || !front.getContext || !back) return;
   if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  var ctx = cv.getContext('2d'), W = 0, H = 0, dpr = 1;
+  var cF = front.getContext('2d'), cB = back.getContext('2d'), W = 0, H = 0, dpr = 1, M = {};
   function size() {
     dpr = Math.min(window.devicePixelRatio || 1, 2);
-    W = cv.clientWidth; H = cv.clientHeight;
-    cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
-    var cr = cv.getBoundingClientRect();
+    W = front.clientWidth; H = front.clientHeight;
+    [front, back].forEach(function (c) { c.width = Math.round(W * dpr); c.height = Math.round(H * dpr); });
+    var cr = front.getBoundingClientRect();
     var band = document.getElementById('mirror-band').getBoundingClientRect();
     var title = document.getElementById('title');
     var rg = document.createRange(); rg.selectNodeContents(title);
     var tr = rg.getBoundingClientRect();
     var fs = parseFloat(getComputedStyle(title).fontSize) || 80;
     M.S = fs * 0.86;
-    M.gA = band.top - cr.top + band.height * 0.55;   // just under the word, so it passes in front of the letters
-    M.gB = tr.bottom - cr.top - Math.max(2, tr.height * 0.06);  // the title's baseline
-    M.tx = Math.min(tr.right - cr.left + M.S * 0.42, W - M.S * 0.32); // just right of the word
+    M.gA = band.top - cr.top + band.height * 0.55;               // just under the word
+    M.gB = tr.bottom - cr.top - Math.max(2, tr.height * 0.06);    // the title's baseline
+    M.tx = Math.min(tr.right - cr.left + M.S * 0.42, W - M.S * 0.32);
   }
-  var M = {};
   size(); window.addEventListener('resize', size);
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(size);
 
   var lerp = function (a, b, t) { return a + (b - a) * t; };
-  var ss = function (t) { t = Math.max(0, Math.min(1, t)); return t * t * (3 - 2 * t); };
+  var clamp = function (t) { return Math.max(0, Math.min(1, t)); };
+  var ss = function (t) { t = clamp(t); return t * t * (3 - 2 * t); };
   var P = function (x, y) { return { x: x, y: y }; };
   var mix = function (p, q, t) { return P(lerp(p.x, q.x, t), lerp(p.y, q.y, t)); };
 
-  // two-bone IK: returns the knee/elbow between root and tip
   function ik(r, t, L1, L2, bend) {
     var dx = t.x - r.x, dy = t.y - r.y, d = Math.hypot(dx, dy) || 1e-6;
     d = Math.min(d, L1 + L2 - 1e-4);
@@ -394,31 +396,32 @@ footer a { color: var(--sand); text-decoration: none; }
     var base = Math.atan2(dy, dx) + bend * a;
     return P(r.x + Math.cos(base) * L1, r.y + Math.sin(base) * L1);
   }
-  // a leg that steps: phase drives the foot along the ground and lifts it on the swing
+  // foot cycle: lifted feet swing forward, planted feet slide back under the body
   function stepFoot(baseX, ph, stride, lift) {
-    var c = Math.cos(ph), s = Math.sin(ph);
-    return P(baseX + c * stride, Math.max(0, s) * lift);
+    var s = Math.sin(ph);
+    return P(baseX - Math.cos(ph) * stride, Math.max(0, s) * lift);
   }
 
-  // ---- three bodies, same skeleton (units: figure height, y up, facing right) ----
-  function animal(ph, alive) {
-    var bob = Math.sin(ph * 2) * 0.012 * alive;
-    var hip = P(-0.30, 0.36 + bob), mid = P(-0.04, 0.45 + bob), chest = P(0.20, 0.34 + bob), head = P(0.42, 0.22 + bob * 2);
-    var st = 0.10 * alive, li = 0.07;
-    var fFR = stepFoot(0.34, ph, st, li), fFL = stepFoot(0.30, ph + Math.PI, st, li);
-    var fBR = stepFoot(-0.20, ph + Math.PI, st, li), fBL = stepFoot(-0.26, ph, st, li);
-    // long spidery limbs: knees/elbows ride high above the spine
+  // ---- three bodies on one skeleton (units: figure height, y up, facing right) ----
+  function animal(ph, go, look, t) {
+    var bob = Math.sin(ph * 2) * 0.018 * go;
+    var twitch = (1 - go) * (Math.sin(t * 23) * 0.012 + look * 0.09);   // head jerks up to look when it freezes
+    var hip = P(-0.30, 0.37 + bob), mid = P(-0.05, 0.45 + bob * 0.5), chest = P(0.19, 0.33 + bob), head = P(0.41, 0.21 + bob * 1.6 + twitch);
+    var st = 0.085 * go, li = 0.09;
+    var fFR = stepFoot(0.33, ph, st, li), fFL = stepFoot(0.29, ph + Math.PI, st, li);
+    var fBR = stepFoot(-0.20, ph + Math.PI, st, li), fBL = stepFoot(-0.25, ph, st, li);
     return { hip: hip, mid: mid, chest: chest, head: head, hr: 0.05, torso: 0.075, limb: 0.03,
       arms: [[chest, ik(chest, fFR, 0.27, 0.27, 1), fFR], [chest, ik(chest, fFL, 0.27, 0.27, 1), fFL]],
       legs: [[hip, ik(hip, fBR, 0.26, 0.26, -1), fBR], [hip, ik(hip, fBL, 0.26, 0.26, -1), fBL]] };
   }
-  function human(ph, alive) {
-    var bob = Math.abs(Math.sin(ph)) * 0.015 * alive;
-    var hip = P(0, 0.47 + bob), mid = P(0.015, 0.63 + bob), chest = P(0.03, 0.79 + bob), head = P(0.06, 0.92 + bob);
-    var st = 0.12 * alive, li = 0.06;
+  function human(ph, go) {
+    var bob = (1 - Math.abs(Math.cos(ph))) * 0.02 * go;                // rises over the planted leg
+    var lean = 0.03 * go;
+    var hip = P(0, 0.47 + bob), mid = P(0.01 + lean * 0.5, 0.63 + bob), chest = P(0.02 + lean, 0.79 + bob), head = P(0.04 + lean, 0.92 + bob);
+    var st = 0.11 * go, li = 0.07;
     var fR = stepFoot(0.02, ph, st, li), fL = stepFoot(0.02, ph + Math.PI, st, li);
-    var sw = Math.sin(ph) * 0.10 * alive;
-    var hR = P(0.03 - sw, 0.44), hL = P(0.03 + sw, 0.44);
+    var swing = Math.cos(ph) * 0.09 * go;                                // arms swing opposite their legs
+    var hR = P(0.04 + swing, 0.45), hL = P(0.04 - swing, 0.45);
     return { hip: hip, mid: mid, chest: chest, head: head, hr: 0.055, torso: 0.07, limb: 0.03,
       arms: [[chest, ik(chest, hR, 0.19, 0.19, -1), hR], [chest, ik(chest, hL, 0.19, 0.19, -1), hL]],
       legs: [[hip, ik(hip, fR, 0.25, 0.24, 1), fR], [hip, ik(hip, fL, 0.25, 0.24, 1), fL]] };
@@ -439,43 +442,65 @@ footer a { color: var(--sand); text-decoration: none; }
       legs: [chain(a.legs[0], b.legs[0]), chain(a.legs[1], b.legs[1])] };
   }
 
-  // ---- timeline (seconds): crawl in, stop and stare, become a Joshua tree, rise as a person, drop and scurry off ----
+  // darting motion: quick bursts with freezes in between. legs = [[endFraction, startU, endU], ...]
+  function darts(u, plan) {
+    for (var i = 0; i < plan.length; i++) {
+      var p = plan[i];
+      if (u < p[1]) return { f: i ? plan[i - 1][0] : 0, go: 0 };
+      if (u < p[2]) { var k = (u - p[1]) / (p[2] - p[1]);
+        var e = 1 - Math.pow(1 - k, 2.2);                                  // fast start, soft landing
+        return { f: lerp(i ? plan[i - 1][0] : 0, p[0], e), go: 1 }; }
+    }
+    return { f: plan[plan.length - 1][0], go: 0 };
+  }
+
+  // ---- the scene ----
+  // 0-5.5   scurries in BEHIND the letters in bursts, freezing to look around (eyes peek through the gaps)
+  // 5.5-9   becomes a Joshua tree behind the word, branches poking over the top
+  // 9-10.5  rises as a person and steps out in front
+  // 10.5-13 walks across the front of the word
+  // 13-15.6 drops to all fours and scrambles up beside the word
+  // 15.6-22 settles there as a Joshua tree, one slow glint
+  // 22-24   drops and bolts off the edge
   var T = 28;
   function stateAt(t) {
-    // x in px, gy = ground line in px; ends settled as a Joshua tree beside the title, then bolts
-    var W_ = W, gA = M.gA, gB = M.gB, tx = M.tx, S = M.S;
-    var x1 = 0.28 * W_, x2 = 0.58 * W_;
-    if (t < 5)    return { x: lerp(-0.25 * W_, x1, t / 5), gy: gA, form: 'A', eyes: 0, moving: 1 };
-    if (t < 6.5)  return { x: x1, gy: gA, form: 'A', eyes: ss((t - 5) / 0.3) * (1 - ss((t - 6.2) / 0.3)), moving: 0 };
-    if (t < 8)    return { x: x1, gy: gA, form: 'AT', k: ss((t - 6.5) / 1.5), eyes: 0, moving: 0 };
-    if (t < 9)    return { x: x1, gy: gA, form: 'T', eyes: 0, moving: 0 };
-    if (t < 10.5) return { x: x1, gy: gA, form: 'TH', k: ss((t - 9) / 1.5), eyes: 0, moving: 0 };
-    if (t < 13)   return { x: lerp(x1, x2, (t - 10.5) / 2.5), gy: gA, form: 'H', eyes: t > 12.2 ? ss((t - 12.2) / 0.3) : 0, moving: 1 };
-    if (t < 14)   return { x: x2, gy: gA, form: 'HA', k: ss(t - 13), eyes: 1 - ss((t - 13) / 0.4), moving: 0.3 };
-    if (t < 15.6) { var k = ss((t - 14) / 1.6);   // scramble up beside the word
-                    return { x: lerp(x2, tx, k), gy: lerp(gA, gB, k) - Math.sin(Math.PI * k) * S * 0.35, form: 'A', eyes: 0, moving: 1.4 }; }
-    if (t < 17)   return { x: tx, gy: gB, form: 'AT', k: ss((t - 15.6) / 1.4), eyes: 0, moving: 0 };
-    if (t < 21.5) return { x: tx, gy: gB, form: 'T', eyes: (t > 19.4 && t < 20.4) ? Math.sin(Math.PI * (t - 19.4)) : 0, moving: 0 };
-    if (t < 22.5) return { x: tx, gy: gB, form: 'TA', k: ss(t - 21.5), eyes: 0, moving: 0 };
-    if (t < 24)   return { x: lerp(tx, W_ + S, ss((t - 22.5) / 1.5)), gy: gB, form: 'A', eyes: 0, moving: 2 };
+    var gA = M.gA, gB = M.gB, tx = M.tx, S = M.S;
+    var x1 = 0.30 * W, x2 = 0.60 * W;
+    if (t < 5.5) {
+      var d = darts(t / 5.5, [[0.35, 0.00, 0.16], [0.55, 0.28, 0.38], [0.80, 0.52, 0.62], [1.00, 0.80, 0.90]]);
+      var look = (!d.go && t > 1.2) ? 1 : 0;
+      return { x: lerp(-0.35 * W, x1, d.f), gy: gA, form: 'A', go: d.go, look: look,
+               eyes: (t > 2.3 && t < 3.0) ? Math.sin(Math.PI * (t - 2.3) / 0.7) : 0, layer: 'back' };
+    }
+    if (t < 7)    return { x: x1, gy: gA, form: 'AT', k: ss((t - 5.5) / 1.5), go: 0, eyes: 0, layer: 'back' };
+    if (t < 9)    return { x: x1, gy: gA, form: 'T', go: 0, eyes: 0, layer: 'back' };
+    if (t < 10.5) return { x: x1, gy: gA, form: 'TH', k: ss((t - 9) / 1.5), go: 0, eyes: 0, layer: t < 10 ? 'back' : 'front' };
+    if (t < 13)   return { x: lerp(x1, x2, (t - 10.5) / 2.5), gy: gA, form: 'H', go: 1, eyes: t > 12.2 ? ss((t - 12.2) / 0.3) : 0, layer: 'front' };
+    if (t < 13.8) return { x: x2, gy: gA, form: 'HA', k: ss((t - 13) / 0.8), go: 0, eyes: 1 - ss((t - 13) / 0.4), layer: 'front' };
+    if (t < 15.6) { var dd = darts((t - 13.8) / 1.8, [[0.45, 0.0, 0.3], [1.0, 0.5, 0.85]]);
+                    return { x: lerp(x2, tx, dd.f), gy: lerp(gA, gB, dd.f) - Math.sin(Math.PI * dd.f) * S * 0.3,
+                             form: 'A', go: dd.go, look: dd.go ? 0 : 1, eyes: 0, layer: 'front' }; }
+    if (t < 17)   return { x: tx, gy: gB, form: 'AT', k: ss((t - 15.6) / 1.4), go: 0, eyes: 0, layer: 'front' };
+    if (t < 21.5) return { x: tx, gy: gB, form: 'T', go: 0, eyes: (t > 19.4 && t < 20.4) ? Math.sin(Math.PI * (t - 19.4)) : 0, layer: 'front' };
+    if (t < 22.3) return { x: tx, gy: gB, form: 'TA', k: ss((t - 21.5) / 0.8), go: 0, eyes: 0, layer: 'front' };
+    if (t < 23.6) { var u = (t - 22.3) / 1.3; return { x: lerp(tx, W + S, 1 - Math.pow(1 - u, 1.6)), gy: gB, form: 'A', go: 1, eyes: 0, layer: 'front' }; }
     return null;
   }
 
-  var ph = 0, lastX = null, t0 = performance.now(), prev = t0;
+  var ph = 0, lastX = null, t0 = performance.now();
   function draw(now) {
-    var dt = Math.min(0.05, (now - prev) / 1000); prev = now;
     var t = ((now - t0) / 1000) % T;
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.clearRect(0, 0, W, H);
+    [cF, cB].forEach(function (c) { c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, W, H); });
     var st = stateAt(t);
     if (!st) { lastX = null; requestAnimationFrame(draw); return; }
-    var S = M.S;                              // figure height in px
-    var x = st.x;
-    if (lastX !== null) ph += Math.abs(x - lastX) / (S * 0.10) * 1.0; // feet keep pace with travel
+    var ctx = st.layer === 'back' ? cB : cF;
+    var S = M.S, x = st.x;
+    var strideNow = st.form === 'H' ? 0.11 : 0.085;
+    if (lastX !== null) ph += Math.abs(x - lastX) * Math.PI / (2 * strideNow * S * 1.25);  // feet planted, no skating
     lastX = x;
-    var alive = st.moving > 0 ? 1 : 0.25;
+    var go = st.go || 0;
+    var A = animal(ph, go, st.look || 0, t), Hm = human(ph, go), Tr = tree(t);
     var pose, treeW = 0;
-    var A = animal(ph, alive), Hm = human(ph, alive), Tr = tree(t);
     switch (st.form) {
       case 'A':  pose = A; break;
       case 'H':  pose = Hm; break;
@@ -485,15 +510,13 @@ footer a { color: var(--sand); text-decoration: none; }
       case 'HA': pose = blend(Hm, A, st.k); break;
       case 'TA': pose = blend(Tr, A, st.k); treeW = 1 - st.k; break;
     }
-    var gy = st.gy;
-    var WX = 1.25, TH = 1.75;
+    var gy = st.gy, WX = 1.25, TH = 1.75;
     var X = function (p) { return x + p.x * S * WX; }, Y = function (p) { return gy - p.y * S; };
     ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-    // draw the body twice: a pale moonlit rim first, then the black figure inside it
     function body(col, pad, glow) {
       ctx.save();
       ctx.strokeStyle = ctx.fillStyle = col;
-      if (glow) { ctx.shadowColor = glow; ctx.shadowBlur = Math.max(6, S * 0.12); }
+      if (glow) { ctx.shadowColor = glow; ctx.shadowBlur = Math.max(4, S * 0.08); }
       function line(pts, w) {
         ctx.lineWidth = w * S * TH + pad * 2; ctx.beginPath(); ctx.moveTo(X(pts[0]), Y(pts[0]));
         for (var i = 1; i < pts.length; i++) ctx.lineTo(X(pts[i]), Y(pts[i]));
@@ -504,7 +527,7 @@ footer a { color: var(--sand); text-decoration: none; }
       line([pose.chest, pose.head], pose.limb * 1.2);
       ctx.beginPath(); ctx.arc(X(pose.head), Y(pose.head), pose.hr * S * 1.35 + pad, 0, Math.PI * 2); ctx.fill();
       line(pose.legs[0], pose.limb); line(pose.arms[0], pose.limb);
-      if (treeW > 0.02) {   // Joshua-tree spikes at the branch tips
+      if (treeW > 0.02) {
         ctx.lineWidth = 0.022 * S + pad * 2;
         [pose.arms[0][2], pose.arms[1][2], pose.head].forEach(function (tip, j) {
           for (var k = 0; k < 11; k++) {
@@ -517,10 +540,9 @@ footer a { color: var(--sand); text-decoration: none; }
       }
       ctx.restore();
     }
-    var rim = Math.max(1.5, S * 0.022);
-    body('rgba(200,214,240,0.9)', rim, 'rgba(170,195,240,0.85)');   // moonlight rim + halo
-    body('#05070c', 0, null);                                        // the creature
-    // eyes
+    var rim = Math.max(1.2, S * 0.017);
+    body('rgba(200,214,240,0.58)', rim, 'rgba(170,195,240,0.5)');   // softer moonlight rim
+    body('#05070c', 0, null);
     if (st.eyes > 0.01) {
       var ex = X(pose.head) + pose.hr * S * 0.5, ey = Y(pose.head) - pose.hr * S * 0.15, r = Math.max(1.5, 0.016 * S);
       ctx.save(); ctx.globalAlpha = st.eyes; ctx.fillStyle = '#ff3320'; ctx.shadowColor = '#ff3320'; ctx.shadowBlur = 8;
