@@ -232,6 +232,7 @@ footer {
 /* Link-tree extras */
 .logo-link { display: block; border-radius: 4px; }
 .logo-link:focus-visible { outline: 2px solid var(--sodium); outline-offset: 3px; }
+.foot-links { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; }
 .social { margin-left: auto; display: flex; gap: 6px; }
 .social a {
   display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px;
@@ -329,7 +330,10 @@ footer {
 
   <footer>
     <span class="objects">Objects in mirror are closer than they appear</span>
-    <a class="prism-link" href="https://prismentmt.com/" target="_blank" rel="noopener">Prism Entertainment &#8599;</a>
+    <div class="foot-links">
+      <a class="prism-link" href="https://prismentmt.com/" target="_blank" rel="noopener">Prism Entertainment &#8599;</a>
+      <a class="prism-link press-link" href="/press/">Press &#8594;</a>
+    </div>
   </footer>
 </main>
 
